@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">BarcodeToDB</string>
     <string name="back_button">Back</string>
+    <string name="add_scan_button">Add/Scan code</string>
+    <string name="search_db_button">Search in database</string>
+    <string name="browse_db_button">Browse database</string>
 </resources>

@@ -10,5 +10,6 @@ data class ScannedItem(
     val id: Int = 0,
     val scannedCode: Int,
     val itemName: String,
-    val scanDate: String
+    val scanDate: String,
+    val itemPrice: Double? = null
 )

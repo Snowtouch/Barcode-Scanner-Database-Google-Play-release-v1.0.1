@@ -9,4 +9,6 @@ import kotlinx.coroutines.flow.asStateFlow
 class BarcodeViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
+
+
 }

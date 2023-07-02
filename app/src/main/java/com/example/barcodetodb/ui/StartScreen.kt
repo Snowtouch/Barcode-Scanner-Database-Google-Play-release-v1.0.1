@@ -1,5 +1,7 @@
 package com.example.barcodetodb.ui
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -13,8 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.barcodetodb.R
+
+enum class AppScreen() {
+    Option,
+    Start
+}
 
 @Composable
 fun BarcodeApp(
@@ -28,6 +36,14 @@ fun BarcodeApp(
                 navigateUp = { }
             )}
     ){ innerPadding ->
+
+        NavHost(
+            navController = navController,
+            startDestination = AppScreen.Option.name,
+            modifier = Modifier.padding(innerPadding)
+        ){
+
+        }
     }
 }
 @Composable

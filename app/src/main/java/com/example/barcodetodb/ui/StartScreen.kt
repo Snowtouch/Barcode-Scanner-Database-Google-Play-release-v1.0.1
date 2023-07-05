@@ -19,14 +19,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.barcodetodb.R
 
-enum class AppScreen() {
+enum class AppScreen {
     Option,
     Start
 }
 
 @Composable
 fun BarcodeApp(
-    viewModel: BarcodeViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ){
     Scaffold(

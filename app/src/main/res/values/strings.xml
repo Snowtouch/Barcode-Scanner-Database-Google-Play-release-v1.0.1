@@ -4,4 +4,7 @@
     <string name="add_scan_button">Add/Scan code</string>
     <string name="search_db_button">Search in database</string>
     <string name="browse_db_button">Browse database</string>
+    <string name="enter_code_field">Enter or scan code</string>
+    <string name="enter_name_field">Enter item name</string>
+    <string name="add_item_screen">Add/Scan new item</string>
 </resources>

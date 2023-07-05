@@ -3,7 +3,6 @@ package com.example.barcodetodb.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -42,7 +41,7 @@ fun OptionScreen(
 }
 
 @Composable
-fun OptionButton(
+private fun OptionButton(
     text: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier

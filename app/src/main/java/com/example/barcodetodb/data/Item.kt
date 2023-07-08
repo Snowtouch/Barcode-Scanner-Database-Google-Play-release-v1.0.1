@@ -3,13 +3,12 @@ package com.example.barcodetodb.data
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "scannedItems")
+@Entity(tableName = "Items")
 
-data class ScannedItem(
+data class Item(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val scannedCode: Int,
+    val itemCode: Int,
     val itemName: String,
-    val scanDate: String,
-    val itemPrice: Double? = null
+    val writeDate: String
 )

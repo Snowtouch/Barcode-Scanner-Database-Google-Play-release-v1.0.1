@@ -16,6 +16,9 @@ import com.example.barcodetodb.R
 
 @Composable
 fun OptionScreen(
+    onAddButtonClicked: (Int) -> Unit,
+    onSearchButtonClicked: (Int) -> Unit,
+    onBrowseButtonClicked: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -29,13 +32,13 @@ fun OptionScreen(
         ) {
             OptionButton(
                 text = R.string.add_scan_button,
-                onClick = { /*TODO*/ })
+                onClick = { onAddButtonClicked(AppScreen.AddItem.title) })
             OptionButton(
                 text = R.string.search_db_button,
-                onClick = { /*TODO*/ })
+                onClick = { onSearchButtonClicked(AppScreen.Search.title) })
             OptionButton(
                 text = R.string.browse_db_button,
-                onClick = { /*TODO*/ })
+                onClick = { onBrowseButtonClicked(AppScreen.Browse.title) })
         }
     }
 }
@@ -56,5 +59,5 @@ private fun OptionButton(
 @Preview
 @Composable
 fun OptionScreenPreview(){
-    OptionScreen()
+    OptionScreen(onAddButtonClicked = {}, onSearchButtonClicked = {}, onBrowseButtonClicked = {})
 }

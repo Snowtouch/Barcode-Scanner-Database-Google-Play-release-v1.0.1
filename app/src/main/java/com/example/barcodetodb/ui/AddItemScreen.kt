@@ -44,26 +44,23 @@ fun AddItemScreen(barcodeViewModel : BarcodeViewModel = viewModel()){
         ){
             UserInputField(
                 label = R.string.enter_code_field,
-                value = barcodeViewModel.userInput,
-                onValueChanged = { barcodeViewModel.userInput = it },
-                leadingIcon = {
-                    Icon(
-                        painterResource(R.drawable.baseline_mode_24),
-                        contentDescription = null)})
+                value = barcodeViewModel.enteredCode,
+                onValueChanged = { barcodeViewModel.enterNewItemCode(it) }
+            )
             Spacer(modifier = Modifier.padding(4.dp))
 
             UserInputField(
                 label = R.string.enter_name_field,
-                value = barcodeViewModel.userInput,
-                onValueChanged = { barcodeViewModel.userInput = it},
-                leadingIcon = {
-                    Icon(
-                        painterResource(R.drawable.baseline_mode_24),
-                        contentDescription = null) })
+                value = barcodeViewModel.enteredName,
+                onValueChanged = { barcodeViewModel.enterNewItemName(it)}
+                )
         }
         AddScreenButton(
             onClick = { /*TODO*/ },
-            label = "Scan")
+            label = "Scan code")
+        AddScreenButton(
+            onClick = { /*TODO*/ },
+            label = "Save")
     }
 }
 @Composable
@@ -86,19 +83,19 @@ fun UserInputField(
     label: Int,
     value: String,
     onValueChanged: (String) -> Unit,
-    leadingIcon: @Composable () -> Unit,
     modifier: Modifier = Modifier){
     TextField(
         value = value,
         singleLine = true,
         shape = shapes.medium,
-        leadingIcon = { leadingIcon() },
+        leadingIcon = {
+            Icon( painterResource(R.drawable.baseline_mode_24), contentDescription = null)  },
         modifier = modifier
             .padding(6.dp)
             .fillMaxWidth(),
         colors = TextFieldDefaults.colors(colorScheme.surface),
         onValueChange = {onValueChanged},
-        label = {Text(stringResource(label))},
+        label = {Text(stringResource(label))}
     )
 }
 @Preview

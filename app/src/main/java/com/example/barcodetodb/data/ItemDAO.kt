@@ -23,7 +23,7 @@ interface ItemDAO {
     fun getAllItems(): Flow<List<Item>>
 
     @Query("SELECT * from Items WHERE itemCode = :itemCode")
-    suspend fun getCode(itemCode: Item?)
+    fun getItemCode(itemCode: String): Flow<Item>
 
     @Query("SELECT * from Items WHERE itemName = :itemName")
     fun getItemsByName(itemName: String): Flow<List<Item>>

@@ -6,7 +6,7 @@ interface ItemsRepository {
 
     fun getAllItemsStream(): Flow<List<Item>>
 
-    suspend fun getCode(item: Item?)
+    fun getItemCode(itemCode: String): Flow<Item>
 
     fun getItemsByNameStream(itemName: String): Flow<List<Item?>>
 

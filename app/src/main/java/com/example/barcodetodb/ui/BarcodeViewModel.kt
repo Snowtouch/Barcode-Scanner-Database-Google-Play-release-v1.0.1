@@ -1,16 +1,12 @@
 package com.example.barcodetodb.ui
 
-import android.content.Context
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.example.barcodetodb.data.AppUiState
+import com.example.barcodetodb.data.DbViewModel
 import com.example.barcodetodb.data.Item
-import com.example.barcodetodb.data.ItemsDatabase
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,21 +16,37 @@ class BarcodeViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
-    //val itemDAO: ItemDAO = data.ItemDAO
+
+    private val _dataFlow = MutableStateFlow<List<Item>>(emptyList())
+    val dataFlow: StateFlow<List<Item>> = _dataFlow
+
     var enteredCode by mutableStateOf(" ")
         private set
     var enteredName by mutableStateOf(" ")
         private set
+    var enteredQuantity by mutableStateOf("1")
 
-    fun enterNewItemCode(newItemCode: String){
+    fun observeDataFromDbViewModel(dbViewModel: DbViewModel){
+        dbViewModel.itemsState
+    }
+
+    fun newItemCode(newItemCode: String){
         enteredCode = newItemCode
     }
-
-    fun enterNewItemName(newItemName: String){
+    fun newItemName(newItemName: String){
         enteredName = newItemName
     }
-    suspend fun saveNewItem(code: Int, name: String){
-        val item = Item(itemCode = code, itemName = name, writeDate = LocalDate.now().toString())
-        ItemsDatabase.getDatabase().itemDAO().getAllItems()
+    fun newItemQuantity(newItemQuantity: String){
+        enteredQuantity = newItemQuantity
     }
+    fun saveNewItem(
+        dbViewModel: DbViewModel,
+        code: Int,
+        name: String,
+        quantity: String? = enteredQuantity
+    ){
+        val item = Item(itemCode = code, itemName = name, writeDate = LocalDate.now().toString(),
+            itemQuantity = quantity?.toInt())
+        dbViewModel.addItem(item)
     }
+}

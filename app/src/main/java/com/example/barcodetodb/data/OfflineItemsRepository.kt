@@ -10,7 +10,7 @@ class OfflineItemsRepository(private val itemDao: ItemDAO) : ItemsRepository {
 
     override fun getAllItemsStream(): Flow<List<Item>> = itemDao.getAllItems()
 
-    override suspend fun getCode(item: Item?) = itemDao.getCode(item)
+    override fun getItemCode(itemCode: String): Flow<Item> = itemDao.getItemCode(itemCode)
 
     override suspend fun insertItem(item: Item) = itemDao.insert(item)
 

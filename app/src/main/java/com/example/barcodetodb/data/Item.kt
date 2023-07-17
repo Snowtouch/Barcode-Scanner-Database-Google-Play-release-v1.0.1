@@ -10,6 +10,7 @@ data class Item(
     val id: Int = 0,
     val itemCode: Int,
     val itemName: String,
+    val itemPrice: Int?,
     val itemQuantity: Int? = 0,
     val writeDate: String
 )

@@ -25,7 +25,8 @@ class BarcodeViewModel : ViewModel() {
     var enteredName by mutableStateOf(" ")
         private set
     var enteredQuantity by mutableStateOf("1")
-
+        private set
+    var enteredPrice by mutableStateOf(" ")
     fun observeDataFromDbViewModel(dbViewModel: DbViewModel){
         dbViewModel.itemsState
     }
@@ -39,14 +40,18 @@ class BarcodeViewModel : ViewModel() {
     fun newItemQuantity(newItemQuantity: String){
         enteredQuantity = newItemQuantity
     }
+    fun newItemPrice(newItemPrice: String){
+        enteredPrice = newItemPrice
+    }
     fun saveNewItem(
         dbViewModel: DbViewModel,
-        code: Int,
-        name: String,
+        code: Int = enteredCode.toInt(),
+        name: String = enteredName,
+        price: Int? = enteredPrice.toInt(),
         quantity: String? = enteredQuantity
     ){
         val item = Item(itemCode = code, itemName = name, writeDate = LocalDate.now().toString(),
-            itemQuantity = quantity?.toInt())
+            itemPrice = price, itemQuantity = quantity?.toInt())
         dbViewModel.addItem(item)
     }
 }

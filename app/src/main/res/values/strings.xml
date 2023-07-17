@@ -4,9 +4,10 @@
     <string name="add_scan_button">Add/Scan code</string>
     <string name="search_db_button">Search in database</string>
     <string name="browse_db_button">Browse database</string>
-    <string name="enter_code_field">Enter code</string>
-    <string name="enter_name_field">Enter item name</string>
-    <string name="enter_quantity_field">Enter quantity (1 by default)</string>
+    <string name="enter_code_field">Item code</string>
+    <string name="enter_name_field">Item name</string>
+    <string name="enter_quantity_field">Quantity (1 by default)</string>
+    <string name="enter_item_price_field">Item price (Optional)</string>
     <string name="add_item_screen">Add/Scan new item</string>
     <string name="browse_screen">Browse database</string>
     <string name="search_screen">Search in database</string>

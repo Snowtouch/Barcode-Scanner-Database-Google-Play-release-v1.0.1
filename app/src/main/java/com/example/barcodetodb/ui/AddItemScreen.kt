@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -27,6 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.barcodetodb.R
+import android.content.Context
+import com.example.barcodetodb.data.DbViewModel
 
 @Composable
 fun AddItemScreen(barcodeViewModel : BarcodeViewModel = viewModel()){
@@ -47,32 +50,37 @@ fun AddItemScreen(barcodeViewModel : BarcodeViewModel = viewModel()){
             UserInputField(
                 label = R.string.enter_code_field,
                 value = barcodeViewModel.enteredCode,
-                onValueChanged = { barcodeViewModel.newItemName(it)},
-                keyBoardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
-                )
+                onValueChanged = { barcodeViewModel.newItemCode(it)},
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardActions = KeyboardActions(KeyboardActions.Default.onNext)
             )
             Spacer(modifier = Modifier.padding(4.dp))
             UserInputField(
                 label = R.string.enter_name_field,
                 value = barcodeViewModel.enteredName,
                 onValueChanged = { barcodeViewModel.newItemName(it)},
-                keyBoardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text
-                )
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                keyboardActions = KeyboardActions(KeyboardActions.Default.onNext)
             )
             Spacer(modifier = Modifier.padding(4.dp))
             UserInputField(
                 label = R.string.enter_quantity_field,
                 value = barcodeViewModel.enteredQuantity,
                 onValueChanged = { barcodeViewModel.newItemQuantity(it)},
-                keyBoardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
-                )
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardActions = KeyboardActions(KeyboardActions.Default.onNext)
+            )
+            Spacer(modifier = Modifier.padding(4.dp))
+            UserInputField(
+                label = R.string.enter_item_price_field,
+                value = barcodeViewModel.enteredPrice,
+                onValueChanged = { barcodeViewModel.newItemPrice(it)},
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardActions = KeyboardActions(KeyboardActions.Default.onDone)
             )
         }
         AddScreenButton(
-            onClick = { /*TODO*/ },
+            onClick = { },
             label = "Scan code")
         AddScreenButton(
             onClick = { /*TODO*/ },
@@ -99,7 +107,8 @@ fun UserInputField(
     label: Int,
     value: String,
     onValueChanged: (String) -> Unit,
-    keyBoardOptions: KeyboardOptions,
+    keyboardOptions: KeyboardOptions,
+    keyboardActions: KeyboardActions,
     modifier: Modifier = Modifier){
     TextField(
         value = value,
@@ -111,8 +120,9 @@ fun UserInputField(
             .padding(6.dp)
             .fillMaxWidth(),
         colors = TextFieldDefaults.colors(colorScheme.surface),
-        onValueChange = {onValueChanged},
-        keyboardOptions = keyBoardOptions,
+        onValueChange = onValueChanged,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         label = {Text(stringResource(label))}
     )
 }

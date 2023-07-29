@@ -11,10 +11,8 @@ fun BrowseScreen(modifier: Modifier = Modifier){
 
     }
 }
-@Composable
-fun ItemsList(list: List<Item>, modifier: Modifier = Modifier){
 
-}
+
 @Composable
 fun ListItem(modifier: Modifier = Modifier){
 

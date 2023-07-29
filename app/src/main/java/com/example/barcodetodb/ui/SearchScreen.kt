@@ -14,9 +14,6 @@ fun SearchScreen(modifier: Modifier = Modifier){
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        UserInputField(label = R.string.enter_code_field, value = "", onValueChanged = {}, keyboardOptions = KeyboardOptions.Default,
-        keyboardActions = KeyboardActions(KeyboardActions.Default.onNext)
-        )
     }
 }
 

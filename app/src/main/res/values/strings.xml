@@ -11,4 +11,5 @@
     <string name="add_item_screen">Add/Scan new item</string>
     <string name="browse_screen">Browse database</string>
     <string name="search_screen">Search in database</string>
+    <string name="add_item_snackbar_conf_message">Item successfully added</string>
 </resources>

@@ -1,8 +1,10 @@
 package com.example.barcodetodb.data
 
-import kotlinx.coroutines.flow.Flow
 
-class OfflineItemsRepository(private val itemDao: ItemDAO) : ItemsRepository {
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+
+class OfflineItemsRepository @Inject constructor(private val itemDao: ItemDAO) : ItemsRepository {
 
     override fun getItemsByNameStream(itemName: String): Flow<List<Item?>> = itemDao.getItemsByName(itemName)
 

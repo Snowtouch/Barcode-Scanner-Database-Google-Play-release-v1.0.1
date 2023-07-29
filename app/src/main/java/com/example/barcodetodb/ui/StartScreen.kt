@@ -1,9 +1,14 @@
 package com.example.barcodetodb.ui
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,7 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.barcodetodb.R
 
 enum class AppScreen(@StringRes val title: Int) {
-    Option(title = R.string.app_name),
+    Main(title = R.string.app_name),
     AddItem(title = R.string.add_item_screen),
     Search(title = R.string.search_screen),
     Browse(title = R.string.browse_screen)
@@ -36,23 +42,30 @@ fun BarcodeApp(
 ){
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = AppScreen.valueOf(
-        backStackEntry?.destination?.route ?: AppScreen.Option.name)
+        backStackEntry?.destination?.route ?: AppScreen.Main.name)
+
     Scaffold(
         topBar = {
             BarcodeAppBar(
                 currentScreen = currentScreen,
                 canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp()}
-            )}
+                navigateUp = { navController.navigateUp()},
+                dropdownMenu = {}
+            )},
+        snackbarHost = { },
+        floatingActionButton = { AddFloatingActionButton { navController.navigate(AppScreen.AddItem.name) } },
+        floatingActionButtonPosition = FabPosition.End
     ){ innerPadding ->
 
         NavHost(
             navController = navController,
-            startDestination = AppScreen.Option.name,
+            startDestination = AppScreen.Main.name,
             modifier = Modifier.padding(innerPadding)
         ){
-            composable(route = AppScreen.Option.name){
-                OptionScreen(
+            composable(route = AppScreen.Main.name){
+                val viewModel = hiltViewModel<MainScreenViewModel>()
+                MainScreen(viewModel)
+                /*OptionScreen(
                     onAddButtonClicked = {
                         navController.navigate(AppScreen.AddItem.name)
                     },
@@ -62,10 +75,11 @@ fun BarcodeApp(
                     onBrowseButtonClicked = {
                         navController.navigate(AppScreen.Browse.name)
                     }
-                )
+                )*/
             }
             composable(route = AppScreen.AddItem.name){
-                AddItemScreen()
+                val viewModel = hiltViewModel<AddItemViewModel>()
+                AddItemScreen(navController, viewModel)
             }
             composable(route = AppScreen.Search.name){
                 SearchScreen()
@@ -77,10 +91,17 @@ fun BarcodeApp(
     }
 }
 @Composable
+fun AddFloatingActionButton(buttonClicked: () -> Unit){
+    FloatingActionButton(onClick =  buttonClicked ) {
+        Icon(imageVector = Icons.Default.Add, contentDescription = "Add new item")
+    }
+}
+@Composable
 fun BarcodeAppBar(
     currentScreen: AppScreen,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
+    dropdownMenu: ()-> Unit,
     modifier: Modifier = Modifier
 ){
     TopAppBar(
@@ -96,6 +117,13 @@ fun BarcodeAppBar(
                         contentDescription = stringResource(id = R.string.back_button))
                 }
             }
+        },
+        actions = {
+            Icon(
+                imageVector = Icons.Filled.MoreVert,
+                contentDescription = null,
+                modifier = modifier
+                    .clickable { })
         }
     )
 }

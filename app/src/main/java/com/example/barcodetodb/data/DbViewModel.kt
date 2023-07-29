@@ -3,61 +3,61 @@ package com.example.barcodetodb.data
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DbViewModel(context: Context) : ViewModel() {
-    private val repository: OfflineItemsRepository
+@HiltViewModel
+class DbViewModel @Inject constructor(val OfflineItemsRepository: OfflineItemsRepository) : ViewModel() {
     private val _itemsState = MutableStateFlow<List<Item>>(emptyList())
     val itemsState: StateFlow<List<Item>> = _itemsState
 
     init {
-        val itemDAO = ItemsDatabase.getDatabase(context).itemDAO()
-        repository = OfflineItemsRepository(itemDAO)
         fetchData()
     }
     private fun fetchData(){
         viewModelScope.launch {
-            repository.getAllItemsStream().collect { items ->
+            OfflineItemsRepository.getAllItemsStream().collect { items ->
                 _itemsState.value = items
             }
         }
     }
     fun addItem(item: Item){
         viewModelScope.launch {
-            repository.insertItem(item)
+            OfflineItemsRepository.insertItem(item)
         }
     }
     fun deleteItem(item: Item){
         viewModelScope.launch {
-            repository.deleteItem(item)
+            OfflineItemsRepository.deleteItem(item)
         }
     }
     fun updateItem(item: Item){
         viewModelScope.launch {
-            repository.updateItem(item)
+            OfflineItemsRepository.updateItem(item)
         }
     }
     fun getAllItems(){
         viewModelScope.launch {
-            repository.getAllItemsStream()
+            OfflineItemsRepository.getAllItemsStream()
         }
     }
     fun getItemByCode(code: String){
         viewModelScope.launch {
-            repository.getItemCode(code)
+            OfflineItemsRepository.getItemCode(code)
         }
     }
     fun getAllItemsByName(name: String){
         viewModelScope.launch {
-            repository.getItemsByNameStream(name)
+            OfflineItemsRepository.getItemsByNameStream(name)
         }
     }
     fun getAllItemsByDate(date: String){
         viewModelScope.launch {
-            repository.getItemsByDateStream(date)
+            OfflineItemsRepository.getItemsByDateStream(date)
         }
     }
 

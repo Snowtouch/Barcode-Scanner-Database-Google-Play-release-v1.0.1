@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey
 data class Item(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val itemCode: Int,
+    val itemCode: String,
     val itemName: String,
-    val itemPrice: Int?,
-    val itemQuantity: Int? = 0,
+    val itemPrice: Double?,
+    val itemQuantity: Int?,
     val writeDate: String
 )

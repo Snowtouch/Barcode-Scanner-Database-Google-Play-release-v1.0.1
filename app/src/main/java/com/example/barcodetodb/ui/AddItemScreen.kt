@@ -15,24 +15,37 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.barcodetodb.R
-import android.content.Context
-import com.example.barcodetodb.data.DbViewModel
+import kotlinx.coroutines.launch
 
 @Composable
-fun AddItemScreen(barcodeViewModel : BarcodeViewModel = viewModel()){
+fun AddItemScreen(
+    navController: NavController,
+    addItemViewModel: AddItemViewModel = viewModel()
+){
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -46,88 +59,103 @@ fun AddItemScreen(barcodeViewModel : BarcodeViewModel = viewModel()){
                 .padding(top = 16.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
             //colors = CardDefaults.elevatedCardColors(colorScheme.secondary)
-        ){
-            UserInputField(
-                label = R.string.enter_code_field,
-                value = barcodeViewModel.enteredCode,
-                onValueChanged = { barcodeViewModel.newItemCode(it)},
+        ) {
+            TextField(
+                value = addItemViewModel.itemUiState.itemDetails.code,
+                onValueChange = { addItemViewModel.updateUiState(addItemViewModel.itemUiState.itemDetails.copy(code = it)) },
+                modifier = Modifier
+                    .padding(6.dp)
+                    .fillMaxWidth(),
+                label = { Text(stringResource(R.string.enter_code_field)) },
+                leadingIcon = {
+                    Icon(painterResource(R.drawable.baseline_mode_24), contentDescription = null)},
+                colors = TextFieldDefaults.colors(focusedTextColor = Color.Black),
+                singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 keyboardActions = KeyboardActions(KeyboardActions.Default.onNext)
             )
             Spacer(modifier = Modifier.padding(4.dp))
-            UserInputField(
-                label = R.string.enter_name_field,
-                value = barcodeViewModel.enteredName,
-                onValueChanged = { barcodeViewModel.newItemName(it)},
+
+            TextField(
+                value = addItemViewModel.itemUiState.itemDetails.name,
+                onValueChange = { addItemViewModel.updateUiState(addItemViewModel.itemUiState.itemDetails.copy(name = it)) },
+                modifier = Modifier
+                    .padding(6.dp)
+                    .fillMaxWidth(),
+                label = { Text(stringResource(R.string.enter_name_field)) },
+                leadingIcon = {
+                    Icon(painterResource(R.drawable.baseline_mode_24), contentDescription = null)},
+                colors = TextFieldDefaults.colors(focusedTextColor = Color.Black),
+                singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 keyboardActions = KeyboardActions(KeyboardActions.Default.onNext)
             )
             Spacer(modifier = Modifier.padding(4.dp))
-            UserInputField(
-                label = R.string.enter_quantity_field,
-                value = barcodeViewModel.enteredQuantity,
-                onValueChanged = { barcodeViewModel.newItemQuantity(it)},
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+
+            TextField(
+                value = addItemViewModel.itemUiState.itemDetails.price ?: "",
+                onValueChange = { addItemViewModel.updateUiState(addItemViewModel.itemUiState.itemDetails.copy(price = it)) },
+                modifier = Modifier
+                    .padding(6.dp)
+                    .fillMaxWidth(),
+                label = { Text(stringResource(R.string.enter_item_price_field)) },
+                leadingIcon = {
+                    Icon(painterResource(R.drawable.baseline_mode_24), contentDescription = null)},
+                colors = TextFieldDefaults.colors(focusedTextColor = Color.Black),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 keyboardActions = KeyboardActions(KeyboardActions.Default.onNext)
             )
             Spacer(modifier = Modifier.padding(4.dp))
-            UserInputField(
-                label = R.string.enter_item_price_field,
-                value = barcodeViewModel.enteredPrice,
-                onValueChanged = { barcodeViewModel.newItemPrice(it)},
+
+            TextField(
+                value = addItemViewModel.itemUiState.itemDetails.quantity ?: "",
+                onValueChange = { addItemViewModel.updateUiState(addItemViewModel.itemUiState.itemDetails.copy(quantity = it)) },
+                modifier = Modifier
+                    .padding(6.dp)
+                    .fillMaxWidth(),
+                label = { Text(stringResource(R.string.enter_quantity_field)) },
+                leadingIcon = {
+                    Icon(painterResource(R.drawable.baseline_mode_24), contentDescription = null)},
+                colors = TextFieldDefaults.colors(focusedTextColor = Color.Black),
+                singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 keyboardActions = KeyboardActions(KeyboardActions.Default.onDone)
             )
         }
-        AddScreenButton(
+        Button(
             onClick = { },
-            label = "Scan code")
-        AddScreenButton(
-            onClick = { /*TODO*/ },
-            label = "Save")
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .defaultMinSize(250.dp),
+            shape = shapes.medium)
+        {
+            Text(text = "Scan code", style = MaterialTheme.typography.bodyLarge)
+        }
+        Button(
+            onClick = {
+                scope.launch {
+                    addItemViewModel.saveNewItem()
+                }
+                navController.popBackStack()
+            },
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .defaultMinSize(250.dp),
+            shape = shapes.medium)
+        {
+            Text(text = "Save", style = MaterialTheme.typography.bodyLarge)
+        }
     }
 }
-@Composable
-fun AddScreenButton(
-    onClick: () -> Unit,
-    label: String
-){
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .padding(top = 8.dp)
-            .defaultMinSize(250.dp),
-        shape = shapes.medium)
-    {
-        Text(text = label, style = MaterialTheme.typography.bodyLarge)
-    }
-}
-@Composable
-fun UserInputField(
-    label: Int,
-    value: String,
-    onValueChanged: (String) -> Unit,
-    keyboardOptions: KeyboardOptions,
-    keyboardActions: KeyboardActions,
-    modifier: Modifier = Modifier){
-    TextField(
-        value = value,
-        singleLine = true,
-        shape = shapes.medium,
-        leadingIcon = {
-            Icon( painterResource(R.drawable.baseline_mode_24), contentDescription = null)  },
-        modifier = modifier
-            .padding(6.dp)
-            .fillMaxWidth(),
-        colors = TextFieldDefaults.colors(colorScheme.surface),
-        onValueChange = onValueChanged,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        label = {Text(stringResource(label))}
-    )
-}
+
 @Preview
 @Composable
-fun AddItemScreenPreview(){
-    AddItemScreen()
+fun AddItemScreenPreview() {
+    AddItemScreen(navController = NavController(LocalContext.current))
 }
+
+
+
+
+

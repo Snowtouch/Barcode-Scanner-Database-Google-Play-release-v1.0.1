@@ -54,7 +54,6 @@ fun AddItemScreen(
                 .fillMaxWidth()
                 .padding(top = 16.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
-            //colors = CardDefaults.elevatedCardColors(colorScheme.secondary)
         ) {
             TextField(
                 value = addItemViewModel.itemUiState.itemDetails.code,

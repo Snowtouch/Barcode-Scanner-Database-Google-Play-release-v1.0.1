@@ -24,9 +24,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -59,7 +56,7 @@ fun BarcodeApp(
         backStackEntry?.destination?.route ?: AppScreen.Main.name)
 
 
-    AppTheme(useDarkTheme = startScreenViewModel.currentThemeIsDark.value) {
+    AppTheme(useDarkTheme = startScreenViewModel.uiState.currentThemeIsDark) {
 
         Scaffold(
             topBar = {
@@ -92,7 +89,6 @@ fun BarcodeApp(
                     SearchScreen()
                 }
                 composable(route = AppScreen.Browse.name){
-                    BrowseScreen()
                 }
             }
         }
@@ -112,9 +108,6 @@ fun BarcodeAppBar(
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ){
-    var expandedTopBarMenu by rememberSaveable { mutableStateOf(false) }
-    var toggleThemeButton by rememberSaveable { mutableStateOf(false) }
-
     TopAppBar(
         title = { Text(stringResource(currentScreen.title)) },
         colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
@@ -131,13 +124,13 @@ fun BarcodeAppBar(
         },
         actions = {
             IconButton(
-                onClick = { expandedTopBarMenu = true}
+                onClick = { viewModel.changeDropdownMenuState() }
             ){
                 Icon(imageVector = Icons.Filled.MoreVert, contentDescription = null)
             }
             DropdownMenu(
-                expanded = expandedTopBarMenu ,
-                onDismissRequest = { expandedTopBarMenu = false }
+                expanded = viewModel.uiState.expandedTopBarMenu ,
+                onDismissRequest = { viewModel.changeDropdownMenuState() }
             ){
                 DropdownMenuItem(
                     text = {
@@ -146,11 +139,10 @@ fun BarcodeAppBar(
                             Text(text = "Dark Theme", fontSize = 20.sp)
                             Spacer(modifier = modifier.size(16.dp))
                             Switch(
-                                checked = toggleThemeButton,
+                                checked = viewModel.uiState.toggleThemeButton,
                                 onCheckedChange = {
                                         isChecked ->
-                                    toggleThemeButton = isChecked
-                                    viewModel.changeTheme()
+                                    viewModel.changeThemeAndSwitchButtonState(isChecked)
                                 }
                             )
                         }

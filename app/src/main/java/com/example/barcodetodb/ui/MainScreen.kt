@@ -1,7 +1,6 @@
 package com.example.barcodetodb.ui
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +36,7 @@ fun ItemsList(
     itemFlow: List<Item>,
     modifier: Modifier = Modifier
     ){
-    Column(modifier = modifier.background(color = Color.White)) {
+    Column(modifier = modifier) {
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)) {
@@ -53,7 +52,7 @@ fun ItemsList(
             modifier = modifier
                 .fillMaxSize()
                 .padding(8.dp)
-        ) {
+        ){
             items(itemFlow) { item ->
                 Card(
                     modifier = modifier.fillMaxWidth(),

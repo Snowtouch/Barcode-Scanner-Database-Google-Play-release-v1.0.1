@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModel
 import com.example.barcodetodb.data.Item
 import com.example.barcodetodb.data.OfflineItemsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -19,10 +17,6 @@ class AddItemViewModel @Inject constructor(
 {
 
     var itemUiState by mutableStateOf(ItemUiState())
-        private set
-
-    private val _showSnackbarEvent = MutableStateFlow(false)
-    val showSnackbarEvent: StateFlow<Boolean> = _showSnackbarEvent
 
     fun updateUiState(updatedItemDetails: ItemDetails){
         itemUiState = itemUiState.copy(itemDetails = updatedItemDetails)
@@ -49,6 +43,6 @@ data class ItemUiState(
 data class ItemDetails(
     val code: String = "",
     val name: String = "",
-    val price: String? = "",
+    val price: String? = "0",
     val quantity: String? = "1",
 )

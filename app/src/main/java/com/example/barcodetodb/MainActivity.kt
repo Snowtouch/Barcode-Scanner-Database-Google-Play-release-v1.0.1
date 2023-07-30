@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.barcodetodb.data.ItemsDatabase
 import com.example.barcodetodb.ui.BarcodeApp
-import com.example.barcodetodb.ui.theme.BarcodeToDBTheme
+import com.example.barcodetodb.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         itemsDatabase = ItemsDatabase.getDatabase(this)
         setContent {
-            BarcodeToDBTheme {
+            AppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),

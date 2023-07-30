@@ -1,7 +1,6 @@
 package com.example.barcodetodb.modules
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.example.barcodetodb.data.ItemDAO
 import com.example.barcodetodb.data.ItemDAOImpl

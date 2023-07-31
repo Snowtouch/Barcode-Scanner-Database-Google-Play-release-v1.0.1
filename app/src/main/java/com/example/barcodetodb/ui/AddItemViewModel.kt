@@ -1,11 +1,13 @@
 package com.example.barcodetodb.ui
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.barcodetodb.data.Item
 import com.example.barcodetodb.data.OfflineItemsRepository
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
@@ -21,6 +23,17 @@ class AddItemViewModel @Inject constructor(
     fun updateUiState(updatedItemDetails: ItemDetails){
         itemUiState = itemUiState.copy(itemDetails = updatedItemDetails)
     }
+    fun resetTextFields(){
+        val newState = ItemDetails()
+        updateUiState(
+            itemUiState.itemDetails.copy(
+                code = newState.code,
+                name = newState.name,
+                price = newState.price,
+                quantity = newState.quantity
+            )
+        )
+    }
 
     suspend fun saveNewItem(
         code: String = itemUiState.itemDetails.code,
@@ -35,6 +48,18 @@ class AddItemViewModel @Inject constructor(
             itemPrice = price?.takeIf { it.isNotBlank() }?.toDouble(),
             itemQuantity = quantity?.toInt())
         OfflineItemsRepository.insertItem(newItem)
+    }
+    fun scanNewCode(context: Context){
+        var rawValue: String?
+        val scanner = GmsBarcodeScanning.getClient(context)
+        scanner.startScan()
+            .addOnSuccessListener { barcode ->
+                rawValue = barcode.rawValue
+                updateUiState(itemUiState.itemDetails.copy(code = rawValue.toString()))
+            }
+            .addOnCanceledListener {  }
+            .addOnFailureListener {  }
+
     }
 }
 data class ItemUiState(

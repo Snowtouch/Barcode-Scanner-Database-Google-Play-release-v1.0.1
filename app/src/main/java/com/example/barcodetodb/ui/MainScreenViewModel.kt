@@ -15,7 +15,6 @@ class MainScreenViewModel @Inject constructor(private val OfflineItemsRepository
 ) : ViewModel() {
     private val _itemFlow = MutableStateFlow<List<Item>>(emptyList())
     val itemFlow: StateFlow<List<Item>> get() = _itemFlow
-
     init {
         viewModelScope.launch {
             OfflineItemsRepository.getAllItemsStream().collect {

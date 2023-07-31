@@ -1,5 +1,6 @@
 package com.example.barcodetodb.ui
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -8,18 +9,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.shapes
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,9 +41,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddItemScreen(
     navController: NavController,
-    addItemViewModel: AddItemViewModel = viewModel()
+    viewModel: AddItemViewModel = viewModel(),
+    context: Context = LocalContext.current
 ){
-    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     Column(
@@ -49,6 +52,14 @@ fun AddItemScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        Button(
+            modifier = Modifier
+                .align(Alignment.End),
+            onClick = { viewModel.resetTextFields() },
+            shape = shapes.small
+        ) {
+            Text(text = "Clear fields")
+        }
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,8 +67,8 @@ fun AddItemScreen(
             elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         ) {
             TextField(
-                value = addItemViewModel.itemUiState.itemDetails.code,
-                onValueChange = { addItemViewModel.updateUiState(addItemViewModel.itemUiState.itemDetails.copy(code = it)) },
+                value = viewModel.itemUiState.itemDetails.code,
+                onValueChange = { viewModel.updateUiState(viewModel.itemUiState.itemDetails.copy(code = it)) },
                 modifier = Modifier
                     .padding(6.dp)
                     .fillMaxWidth(),
@@ -72,8 +83,8 @@ fun AddItemScreen(
             Spacer(modifier = Modifier.padding(4.dp))
 
             TextField(
-                value = addItemViewModel.itemUiState.itemDetails.name,
-                onValueChange = { addItemViewModel.updateUiState(addItemViewModel.itemUiState.itemDetails.copy(name = it)) },
+                value = viewModel.itemUiState.itemDetails.name,
+                onValueChange = { viewModel.updateUiState(viewModel.itemUiState.itemDetails.copy(name = it)) },
                 modifier = Modifier
                     .padding(6.dp)
                     .fillMaxWidth(),
@@ -88,8 +99,8 @@ fun AddItemScreen(
             Spacer(modifier = Modifier.padding(4.dp))
 
             TextField(
-                value = addItemViewModel.itemUiState.itemDetails.price ?: "",
-                onValueChange = { addItemViewModel.updateUiState(addItemViewModel.itemUiState.itemDetails.copy(price = it)) },
+                value = viewModel.itemUiState.itemDetails.price ?: "",
+                onValueChange = { viewModel.updateUiState(viewModel.itemUiState.itemDetails.copy(price = it)) },
                 modifier = Modifier
                     .padding(6.dp)
                     .fillMaxWidth(),
@@ -104,8 +115,8 @@ fun AddItemScreen(
             Spacer(modifier = Modifier.padding(4.dp))
 
             TextField(
-                value = addItemViewModel.itemUiState.itemDetails.quantity ?: "",
-                onValueChange = { addItemViewModel.updateUiState(addItemViewModel.itemUiState.itemDetails.copy(quantity = it)) },
+                value = viewModel.itemUiState.itemDetails.quantity ?: "",
+                onValueChange = { viewModel.updateUiState(viewModel.itemUiState.itemDetails.copy(quantity = it)) },
                 modifier = Modifier
                     .padding(6.dp)
                     .fillMaxWidth(),
@@ -119,9 +130,11 @@ fun AddItemScreen(
             )
         }
         Button(
-            onClick = { },
+            onClick = {
+                viewModel.scanNewCode(context)
+                      },
             modifier = Modifier
-                .padding(top = 8.dp)
+                .padding(top = 24.dp)
                 .defaultMinSize(250.dp),
             shape = shapes.medium)
         {
@@ -130,7 +143,7 @@ fun AddItemScreen(
         Button(
             onClick = {
                 scope.launch {
-                    addItemViewModel.saveNewItem()
+                    viewModel.saveNewItem()
                 }
                 navController.popBackStack()
             },
@@ -143,7 +156,6 @@ fun AddItemScreen(
         }
     }
 }
-
 @Preview
 @Composable
 fun AddItemScreenPreview() {

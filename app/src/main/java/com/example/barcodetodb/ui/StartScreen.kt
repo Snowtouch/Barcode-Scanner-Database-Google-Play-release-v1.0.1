@@ -68,7 +68,9 @@ fun BarcodeApp(
                 )
                      },
             snackbarHost = { },
-            floatingActionButton = { AddFloatingActionButton { navController.navigate(AppScreen.AddItem.name) } },
+            floatingActionButton = {
+                if (currentScreen != AppScreen.AddItem) {
+                    AddFloatingActionButton { navController.navigate(AppScreen.AddItem.name) } } },
             floatingActionButtonPosition = FabPosition.End
         ){ innerPadding ->
 

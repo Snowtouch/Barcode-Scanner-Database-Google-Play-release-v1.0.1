@@ -9,16 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.shapes
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -42,7 +38,8 @@ import kotlinx.coroutines.launch
 fun AddItemScreen(
     navController: NavController,
     viewModel: AddItemViewModel = viewModel(),
-    context: Context = LocalContext.current
+    context: Context = LocalContext.current,
+    editItemFlag: Boolean = false
 ){
     val scope = rememberCoroutineScope()
 
@@ -143,7 +140,14 @@ fun AddItemScreen(
         Button(
             onClick = {
                 scope.launch {
-                    viewModel.saveNewItem()
+                    if (editItemFlag) {
+                        viewModel.saveOrEditItem(isEdited = true)
+                        viewModel.resetTextFields()
+                    }
+                    else {
+                        viewModel.saveOrEditItem(isEdited = false)
+                        viewModel.resetTextFields()
+                    }
                 }
                 navController.popBackStack()
             },
@@ -159,7 +163,7 @@ fun AddItemScreen(
 @Preview
 @Composable
 fun AddItemScreenPreview() {
-    AddItemScreen(navController = NavController(LocalContext.current))
+    AddItemScreen(navController = NavController(LocalContext.current), editItemFlag = false)
 }
 
 

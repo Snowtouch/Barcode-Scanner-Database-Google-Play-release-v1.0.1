@@ -43,6 +43,7 @@ import com.example.barcodetodb.ui.theme.AppTheme
 enum class AppScreen(@StringRes val title: Int) {
     Main(title = R.string.app_name),
     AddItem(title = R.string.add_item_screen),
+    EditItem(title = R.string.add_item_screen),
     Search(title = R.string.search_screen),
     Browse(title = R.string.browse_screen)
 }
@@ -51,6 +52,7 @@ fun BarcodeApp(
     navController: NavHostController = rememberNavController()
 ){
     val startScreenViewModel: StartScreenViewModel = viewModel()
+    val addItemViewModel: AddItemViewModel = viewModel()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = AppScreen.valueOf(
         backStackEntry?.destination?.route ?: AppScreen.Main.name)
@@ -69,8 +71,11 @@ fun BarcodeApp(
                      },
             snackbarHost = { },
             floatingActionButton = {
-                if (currentScreen != AppScreen.AddItem) {
-                    AddFloatingActionButton { navController.navigate(AppScreen.AddItem.name) } } },
+                if (currentScreen != AppScreen.AddItem){
+                    AddFloatingActionButton {
+                        addItemViewModel.resetTextFields()
+                        navController.navigate(AppScreen.AddItem.name)
+                    } } },
             floatingActionButtonPosition = FabPosition.End
         ){ innerPadding ->
 
@@ -81,11 +86,17 @@ fun BarcodeApp(
             ){
                 composable(route = AppScreen.Main.name){
                     val viewModel = hiltViewModel<MainScreenViewModel>()
-                    MainScreen(viewModel)
+                    val itemViewModel = hiltViewModel<AddItemViewModel>()
+                    MainScreen(navController, viewModel, itemViewModel)
                 }
                 composable(route = AppScreen.AddItem.name){
                     val viewModel = hiltViewModel<AddItemViewModel>()
+                    hiltViewModel<AddItemViewModel>()
                     AddItemScreen(navController, viewModel)
+                }
+                composable(route = AppScreen.EditItem.name){
+                    val viewModel = hiltViewModel<AddItemViewModel>()
+                    AddItemScreen(navController, viewModel, editItemFlag = true)
                 }
                 composable(route = AppScreen.Search.name){
                     SearchScreen()

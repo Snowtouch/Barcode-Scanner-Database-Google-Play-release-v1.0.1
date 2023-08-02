@@ -22,4 +22,8 @@ class MainScreenViewModel @Inject constructor(private val OfflineItemsRepository
             }
         }
     }
+    fun deleteItem(item: Item){
+        viewModelScope.launch { OfflineItemsRepository.deleteItem(item) }
+
+    }
 }

@@ -6,55 +6,54 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.barcodetodb.data.Item
-import java.time.LocalDate
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.draw.clip
 
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel = viewModel()){
+fun MainScreen(
+    navController: NavController,
+    viewModel: MainScreenViewModel = viewModel(),
+    addItemViewModel: AddItemViewModel = viewModel()
+){
     val itemFlow by viewModel.itemFlow.collectAsState(initial = emptyList())
-    ItemsList(itemFlow = itemFlow)
+    ItemsList(viewModel, addItemViewModel, navController, itemFlow = itemFlow)
 }
 @Composable
 fun ItemsList(
+    mainScreenViewModel: MainScreenViewModel,
+    addItemViewModel: AddItemViewModel,
+    navController: NavController,
     itemFlow: List<Item>,
     modifier: Modifier = Modifier
     ){
-    var expanded by remember { mutableStateOf (false) }
+    var expandedItemId by remember { mutableStateOf(-1L) }
 
     Column(modifier = modifier) {
         Row(modifier = Modifier
@@ -79,7 +78,10 @@ fun ItemsList(
                     shape = MaterialTheme.shapes.extraSmall,
                     elevation = CardDefaults.cardElevation(8.dp),
                     border = BorderStroke(width = Dp.Hairline, Color.Black),
-                    onClick = { expanded = !expanded }
+                    onClick = {
+                        expandedItemId =
+                    if (expandedItemId == item.id.toLong()) -1L else item.id.toLong()
+                    }
                 ){
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
@@ -104,21 +106,33 @@ fun ItemsList(
                             modifier = modifier.weight(5f))
                     }
                         AnimatedVisibility(
-                            visible = expanded,
+                            visible = expandedItemId == item.id.toLong(),
                             enter = fadeIn() + expandVertically(),
                             exit = fadeOut() + shrinkVertically()
                         ){
                         Row(modifier = modifier) {
-                            Button(modifier = modifier
+                            TextButton(modifier = modifier
                                 .size(width = 80.dp, height = 35.dp),
-                                onClick = { /*TODO*/ },
-                                shape = RoundedCornerShape(8.dp)
+                                onClick = {
+                                    addItemViewModel.updateUiState(ItemDetails(
+                                        id = item.id.toString(),
+                                        code = item.itemCode,
+                                        name = item.itemName,
+                                        price = item.itemPrice.toString(),
+                                        quantity = item.itemQuantity.toString()
+                                    ))
+                                    navController.navigate(route = AppScreen.EditItem.name)
+                                },
+                                shape = RoundedCornerShape(8.dp),
                             ) {
                                 Text(text = "Edit")
                             }
-                            Button(modifier = modifier.padding(start = 8.dp)
+                            TextButton(modifier = modifier
+                                .padding(start = 8.dp)
                                 .size(width = 90.dp, height = 35.dp),
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                          mainScreenViewModel.deleteItem(item)
+                                          },
                                 shape = RoundedCornerShape(8.dp)
                             ) {
                                 Text(text = "Delete")
@@ -130,12 +144,12 @@ fun ItemsList(
         }
     }
 }
-@Preview
+/*@Preview
 @Composable
-fun MainScreenPreview(){
-    ItemsList(itemFlow = listOf(
+fun MainScreenPreview(context: Context = LocalContext.current){
+    ItemsList(navController = NavController(context), itemFlow = listOf(
         Item(1,"45363456","AAAAAAA", 33.toDouble(),54,LocalDate.now().toString()),
                 Item(1,"453634554363456346","AAA",33.toDouble(),54,LocalDate.now().toString()),
         Item(1,"45363455436346","AAA",33.toDouble(),5455,LocalDate.now().toString())
     ))
-}
+}*/

@@ -35,19 +35,36 @@ class AddItemViewModel @Inject constructor(
         )
     }
 
-    suspend fun saveNewItem(
+    suspend fun saveOrEditItem(
+        id: String = itemUiState.itemDetails.id,
         code: String = itemUiState.itemDetails.code,
         name: String = itemUiState.itemDetails.name,
         price: String? = itemUiState.itemDetails.price,
-        quantity: String? = itemUiState.itemDetails.quantity
+        quantity: String? = itemUiState.itemDetails.quantity,
+        isEdited: Boolean
     ){
-        val newItem = Item(
-            itemCode = code,
-            itemName = name,
-            writeDate = LocalDate.now().toString(),
-            itemPrice = price?.takeIf { it.isNotBlank() }?.toDouble(),
-            itemQuantity = quantity?.toInt())
-        OfflineItemsRepository.insertItem(newItem)
+        if (!isEdited) {
+            val newItem = Item(
+                itemCode = code,
+                itemName = name,
+                writeDate = LocalDate.now().toString(),
+                itemPrice = price?.takeIf { it.isNotBlank() }?.toDouble(),
+                itemQuantity = quantity?.toInt()
+            )
+            OfflineItemsRepository.insertItem(newItem)
+        }
+        else {
+            val newItem = Item(
+                id = id.toInt(),
+                itemCode = code,
+                itemName = name,
+                writeDate = LocalDate.now().toString(),
+                itemPrice = price?.takeIf { it.isNotBlank() }?.toDouble(),
+                itemQuantity = quantity?.toInt()
+
+            )
+            OfflineItemsRepository.updateItem(newItem)
+        }
     }
     fun scanNewCode(context: Context){
         var rawValue: String?
@@ -66,6 +83,7 @@ data class ItemUiState(
     val itemDetails: ItemDetails = ItemDetails(),
 )
 data class ItemDetails(
+    val id: String = "",
     val code: String = "",
     val name: String = "",
     val price: String? = "0",

@@ -11,11 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.barcodetodb.data.ItemsDatabase
 import com.example.barcodetodb.ui.BarcodeApp
+import com.example.barcodetodb.ui.MainScreenViewModel
 import com.example.barcodetodb.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var mainScreenViewModel: MainScreenViewModel
     private lateinit var itemsDatabase: ItemsDatabase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +35,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mainScreenViewModel.refreshDataFromDatabase()
     }
 }
 @Preview

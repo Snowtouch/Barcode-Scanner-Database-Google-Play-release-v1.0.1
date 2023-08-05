@@ -4,12 +4,16 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FabPosition
@@ -20,12 +24,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,7 +49,7 @@ import com.example.barcodetodb.ui.theme.AppTheme
 enum class AppScreen(@StringRes val title: Int) {
     Main(title = R.string.app_name),
     AddItem(title = R.string.add_item_screen),
-    EditItem(title = R.string.add_item_screen),
+    EditItem(title = R.string.edit_item_screen),
     Search(title = R.string.search_screen),
     Browse(title = R.string.browse_screen)
 }
@@ -57,7 +63,6 @@ fun BarcodeApp(
     val currentScreen = AppScreen.valueOf(
         backStackEntry?.destination?.route ?: AppScreen.Main.name)
 
-
     AppTheme(useDarkTheme = startScreenViewModel.uiState.currentThemeIsDark) {
 
         Scaffold(
@@ -69,6 +74,13 @@ fun BarcodeApp(
                     navigateUp = { navController.navigateUp()},
                 )
                      },
+            bottomBar = {
+                BottomBarcodeAppBar(
+                    value = "",
+                    onValueChange = {},
+                    clearButtonOnClick = {},
+                    calendarButtonOnClick = {}
+                ) },
             snackbarHost = { },
             floatingActionButton = {
                 if (currentScreen != AppScreen.AddItem){
@@ -111,6 +123,37 @@ fun BarcodeApp(
 fun AddFloatingActionButton(buttonClicked: () -> Unit){
     FloatingActionButton(onClick =  buttonClicked ) {
         Icon(imageVector = Icons.Default.Add, contentDescription = "Add new item")
+    }
+}
+@Composable
+fun BottomBarcodeAppBar(
+    value: String,
+    onValueChange: (String) -> Unit,
+    clearButtonOnClick: () -> Unit,
+    calendarButtonOnClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    BottomAppBar(modifier = modifier) {
+        Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            TextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = modifier,
+                label = { Text(stringResource(R.string.search_text_field))},
+                leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "") },
+                trailingIcon = {
+                    IconButton(onClick = clearButtonOnClick) {
+                        Icon(Icons.Filled.Clear, contentDescription = "")
+                    }
+                }
+            )
+            IconButton(onClick = calendarButtonOnClick) {
+                Icon(
+                    painterResource(R.drawable.baseline_calendar_month_24),
+                    contentDescription = ""
+                )
+            }
+        }
     }
 }
 @Composable
@@ -169,5 +212,6 @@ fun BarcodeAppBar(
 @Preview
 @Composable
 fun BarcodeToDbPreview(){
-    BarcodeApp()
+    BottomBarcodeAppBar(calendarButtonOnClick = {}, value = "",
+        onValueChange = {}, clearButtonOnClick = {})
 }

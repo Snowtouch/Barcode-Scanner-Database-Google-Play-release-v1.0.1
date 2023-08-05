@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.barcodetodb.R
+import dagger.hilt.android.internal.modules.ApplicationContextModule
 import kotlinx.coroutines.launch
 
 @Composable
@@ -163,7 +164,7 @@ fun AddItemScreen(
 @Preview
 @Composable
 fun AddItemScreenPreview() {
-    AddItemScreen(navController = NavController(LocalContext.current), editItemFlag = false)
+   AddItemScreen(navController = NavController(LocalContext.current), editItemFlag = false)
 }
 
 

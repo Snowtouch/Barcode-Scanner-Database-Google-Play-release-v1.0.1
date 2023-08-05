@@ -9,7 +9,9 @@
     <string name="enter_quantity_field">Quantity (1 by default)</string>
     <string name="enter_item_price_field">Item price (Optional)</string>
     <string name="add_item_screen">Add/Scan new item</string>
+    <string name="edit_item_screen">Edit item</string>
     <string name="browse_screen">Browse database</string>
     <string name="search_screen">Search in database</string>
     <string name="add_item_snackbar_conf_message">Item successfully added</string>
+    <string name="search_text_field">Enter code or name</string>
 </resources>

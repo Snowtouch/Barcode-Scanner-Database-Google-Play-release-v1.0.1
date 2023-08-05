@@ -1,5 +1,6 @@
 package com.example.barcodetodb.ui
 
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.barcodetodb.data.Item
@@ -15,15 +16,19 @@ class MainScreenViewModel @Inject constructor(private val OfflineItemsRepository
 ) : ViewModel() {
     private val _itemFlow = MutableStateFlow<List<Item>>(emptyList())
     val itemFlow: StateFlow<List<Item>> get() = _itemFlow
+
     init {
+        refreshDataFromDatabase()
+    }
+    fun deleteItem(item: Item){
+        viewModelScope.launch { OfflineItemsRepository.deleteItem(item) }
+
+    }
+    fun refreshDataFromDatabase() {
         viewModelScope.launch {
             OfflineItemsRepository.getAllItemsStream().collect {
                 _itemFlow.value = it
             }
         }
-    }
-    fun deleteItem(item: Item){
-        viewModelScope.launch { OfflineItemsRepository.deleteItem(item) }
-
     }
 }

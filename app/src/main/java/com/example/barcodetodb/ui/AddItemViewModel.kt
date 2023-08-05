@@ -75,7 +75,7 @@ class AddItemViewModel @Inject constructor(
                 updateUiState(itemUiState.itemDetails.copy(code = rawValue.toString()))
             }
             .addOnCanceledListener {  }
-            .addOnFailureListener {  }
+            .addOnFailureListener { e -> updateUiState(itemUiState.itemDetails.copy(code = e.toString())) }
 
     }
 }

@@ -24,16 +24,18 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.barcodetodb.R
 import com.example.barcodetodb.data.Item
 
 @Composable
@@ -58,7 +60,7 @@ fun ItemsList(
     itemFlow: List<Item>,
     modifier: Modifier = Modifier
     ){
-    var expandedItemId by rememberSaveable { mutableStateOf(-1L) }
+    var expandedItemId by rememberSaveable { mutableLongStateOf(-1L) }
 
     Column(modifier = modifier) {
         Row(modifier = Modifier
@@ -130,7 +132,7 @@ fun ItemsList(
                                 },
                                 shape = RoundedCornerShape(8.dp),
                             ) {
-                                Text(text = "Edit")
+                                Text(stringResource(R.string.item_list_on_click_context_menu_edit))
                             }
                             TextButton(modifier = modifier
                                 .padding(start = 8.dp)
@@ -140,7 +142,7 @@ fun ItemsList(
                                           },
                                 shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text(text = "Delete")
+                                Text(stringResource(R.string.item_list_on_click_context_menu_delete))
                             }
                         }
                     }
@@ -149,12 +151,3 @@ fun ItemsList(
         }
     }
 }
-/*@Preview
-@Composable
-fun MainScreenPreview(context: Context = LocalContext.current){
-    ItemsList(navController = NavController(context), itemFlow = listOf(
-        Item(1,"45363456","AAAAAAA", 33.toDouble(),54,LocalDate.now().toString()),
-                Item(1,"453634554363456346","AAA",33.toDouble(),54,LocalDate.now().toString()),
-        Item(1,"45363455436346","AAA",33.toDouble(),5455,LocalDate.now().toString())
-    ))
-}*/

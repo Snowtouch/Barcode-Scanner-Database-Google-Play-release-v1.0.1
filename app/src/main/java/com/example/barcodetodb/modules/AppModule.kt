@@ -39,17 +39,17 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAddItemViewModel(
-        OfflineItemsRepository: OfflineItemsRepository
+        offlineItemsRepository: OfflineItemsRepository
     ): AddItemViewModel {
-        return AddItemViewModel(OfflineItemsRepository)
+        return AddItemViewModel(offlineItemsRepository)
     }
 
     @Provides
     @Singleton
     fun provideItemListViewModel(
-        OfflineItemsRepository: OfflineItemsRepository
+        offlineItemsRepository: OfflineItemsRepository
     ): ItemListViewModel {
-        return ItemListViewModel(OfflineItemsRepository)
+        return ItemListViewModel(offlineItemsRepository)
     }
 
 

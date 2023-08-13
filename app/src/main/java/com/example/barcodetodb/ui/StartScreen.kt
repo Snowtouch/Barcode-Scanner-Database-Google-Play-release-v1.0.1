@@ -47,7 +47,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -59,10 +58,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.barcodetodb.R
 import com.example.barcodetodb.ui.theme.AppTheme
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 enum class AppScreen(@StringRes val title: Int) {
     Main(title = R.string.app_name),
@@ -294,9 +289,4 @@ fun BarcodeAppBar(
             }
         }
     )
-}
-@Preview
-@Composable
-fun BarcodeToDbPreview() {
-    BarcodeApp()
 }

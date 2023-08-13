@@ -3,12 +3,6 @@
 
     <style name="Theme.BarcodeToDB" parent="android:Theme.Material.Light.NoActionBar" />
     <!-- Style dla trybu jasnego (light) -->
-    <style name="AppTheme.Light" parent="android:Theme.Material.Light">
-        <!-- Dodaj tutaj niestandardowe atrybuty dla trybu jasnego -->
-    </style>
 
     <!-- Style dla trybu ciemnego (dark) -->
-    <style name="AppTheme.Dark" parent="android:ThemeOverlay.Material.Dark">
-        <!-- Dodaj tutaj niestandardowe atrybuty dla trybu ciemnego -->
-    </style>
 </resources>

@@ -1,18 +1,12 @@
 <resources>
     <string name="app_name">BarcodeToDB</string>
     <string name="back_button">Back</string>
-    <string name="add_scan_button">Add/Scan code</string>
-    <string name="search_db_button">Search in database</string>
-    <string name="browse_db_button">Browse database</string>
     <string name="enter_code_field">Item code</string>
     <string name="enter_name_field">Item name</string>
     <string name="enter_quantity_field">Quantity (1 by default)</string>
     <string name="enter_item_price_field">Item price (Optional)</string>
     <string name="add_item_screen">Add/Scan new item</string>
     <string name="edit_item_screen">Edit item</string>
-    <string name="browse_screen">Browse database</string>
-    <string name="search_screen">Search in database</string>
-    <string name="add_item_snackbar_conf_message">Item successfully added</string>
     <string name="search_text_field">Enter code or name</string>
     <string name="calendar_filter_button">Filter</string>
     <string name="calendar_clear_button">Clear selection</string>
@@ -20,4 +14,6 @@
     <string name="add_item_screen_clear_button">Clear fields</string>
     <string name="add_item_screen_scan_button">Scan code</string>
     <string name="add_item_screen_save_button">Save</string>
+    <string name="item_list_on_click_context_menu_edit">Edit</string>
+    <string name="item_list_on_click_context_menu_delete">Delete</string>
 </resources>

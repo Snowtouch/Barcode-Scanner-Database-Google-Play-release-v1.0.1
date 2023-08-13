@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +30,11 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
     init {
         refreshDataFromDatabase()
     }
+    private fun dateToEpochMilis(date: String): Long {
+        val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd")
+        val date = LocalDate.parse(date, formatter)
+        return date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+    }
     fun filterList(
         query: String = "",
         startDate: Long?,
@@ -36,10 +43,11 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
         val filteredItems = _rawItemFlow.value.filter { item ->
             val queryMatches = item.itemCode.contains(query, ignoreCase = true) ||
                     item.itemName.contains(query, ignoreCase = true)
-            val itemDateMilis = Instant.parse(item.writeDate)
-            val itemLong = itemDateMilis.toEpochMilli()
-            val startDateMatches = startDate == null || itemLong >= startDate
-            val endDateMatches = endDate == null || itemLong <= endDate
+
+            val itemDate = dateToEpochMilis(item.writeDate)
+
+            val startDateMatches = startDate == null || (itemDate >= startDate)
+            val endDateMatches = endDate == null || (itemDate <= endDate)
 
             queryMatches && startDateMatches && endDateMatches
         }

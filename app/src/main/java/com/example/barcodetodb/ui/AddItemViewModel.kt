@@ -14,10 +14,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddItemViewModel @Inject constructor(
-    private val OfflineItemsRepository: OfflineItemsRepository
+    private val offlineItemsRepository: OfflineItemsRepository
     ) : ViewModel()
 {
-
     var itemUiState by mutableStateOf(ItemUiState())
 
     fun updateUiState(updatedItemDetails: ItemDetails){
@@ -34,7 +33,6 @@ class AddItemViewModel @Inject constructor(
             )
         )
     }
-
     suspend fun saveOrEditItem(
         id: String = itemUiState.itemDetails.id,
         code: String = itemUiState.itemDetails.code,
@@ -52,7 +50,7 @@ class AddItemViewModel @Inject constructor(
                 itemPrice = price?.takeIf { it.isNotBlank() }?.toDouble(),
                 itemQuantity = quantity?.toInt()
             )
-            OfflineItemsRepository.insertItem(newItem)
+            offlineItemsRepository.insertItem(newItem)
         }
         else {
             val newItem = Item(
@@ -64,7 +62,7 @@ class AddItemViewModel @Inject constructor(
                 itemQuantity = quantity?.toInt(),
 
             )
-            OfflineItemsRepository.updateItem(newItem)
+            offlineItemsRepository.updateItem(newItem)
         }
     }
     fun scanNewCode(context: Context){
@@ -76,7 +74,7 @@ class AddItemViewModel @Inject constructor(
                 updateUiState(itemUiState.itemDetails.copy(code = rawValue.toString()))
             }
             .addOnCanceledListener {  }
-            .addOnFailureListener { e -> updateUiState(itemUiState.itemDetails.copy(code = e.toString())) }
+            .addOnFailureListener {  }
 
     }
 }

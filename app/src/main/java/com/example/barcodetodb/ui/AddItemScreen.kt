@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 fun AddItemScreen(
     navController: NavController,
     viewModel: AddItemViewModel = hiltViewModel(),
+    itemListViewModel: ItemListViewModel = hiltViewModel(),
     context: Context = LocalContext.current,
     editItemFlag: Boolean = false
 ){
@@ -55,7 +56,7 @@ fun AddItemScreen(
             onClick = { viewModel.resetTextFields() },
             shape = shapes.small
         ) {
-            Text(text = "Clear fields")
+            Text(stringResource(R.string.add_item_screen_clear_button))
         }
         Card(
             modifier = Modifier
@@ -127,15 +128,13 @@ fun AddItemScreen(
             )
         }
         Button(
-            onClick = {
-                viewModel.scanNewCode(context)
-                      },
+            onClick = { viewModel.scanNewCode(context) },
             modifier = Modifier
                 .padding(top = 24.dp)
                 .defaultMinSize(250.dp),
             shape = shapes.medium)
         {
-            Text(text = "Scan code", style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(R.string.add_item_screen_scan_button), style = MaterialTheme.typography.bodyLarge)
         }
         Button(
             onClick = {
@@ -143,10 +142,13 @@ fun AddItemScreen(
                     if (editItemFlag) {
                         viewModel.saveOrEditItem(isEdited = true)
                         viewModel.resetTextFields()
+                        itemListViewModel.isFiltered.value = false
+
                     }
                     else {
                         viewModel.saveOrEditItem(isEdited = false)
                         viewModel.resetTextFields()
+                        itemListViewModel.isFiltered.value = false
                     }
                 }
                 navController.popBackStack()
@@ -156,7 +158,8 @@ fun AddItemScreen(
                 .defaultMinSize(250.dp),
             shape = shapes.medium)
         {
-            Text(text = "Save", style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(R.string.add_item_screen_save_button),
+                style = MaterialTheme.typography.bodyLarge)
         }
     }
 }

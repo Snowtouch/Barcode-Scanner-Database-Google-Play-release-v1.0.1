@@ -47,7 +47,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,9 +67,7 @@ import java.time.format.DateTimeFormatter
 enum class AppScreen(@StringRes val title: Int) {
     Main(title = R.string.app_name),
     AddItem(title = R.string.add_item_screen),
-    EditItem(title = R.string.edit_item_screen),
-    Search(title = R.string.search_screen),
-    Browse(title = R.string.browse_screen)
+    EditItem(title = R.string.edit_item_screen)
 }
 
 @Composable
@@ -84,7 +81,7 @@ fun BarcodeApp(navController: NavHostController = rememberNavController())
         backStackEntry?.destination?.route ?: AppScreen.Main.name)
     val queryState = rememberSaveable { mutableStateOf("") }
     val showCalendar = rememberSaveable { mutableStateOf(false) }
-    var calendarState = rememberDateRangePickerState(initialDisplayMode = DisplayMode.Picker)
+    val calendarState = rememberDateRangePickerState(initialDisplayMode = DisplayMode.Picker)
 
     AppTheme(useDarkTheme = startScreenViewModel.uiState.currentThemeIsDark){
         Scaffold(
@@ -100,7 +97,7 @@ fun BarcodeApp(navController: NavHostController = rememberNavController())
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
-                    ){
+                    ) {
                         TextField(
                             value = queryState.value,
                             onValueChange = { newValue ->
@@ -117,58 +114,70 @@ fun BarcodeApp(navController: NavHostController = rememberNavController())
                             },
                             modifier = Modifier,
                             label = { Text(stringResource(R.string.search_text_field))},
-                            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "") },
+                            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                             trailingIcon = { if (queryState.value.isNotBlank())
                                 IconButton(
                                     onClick = {
                                         queryState.value = ""
-                                        itemListViewModel.isFiltered.value = false}) {
-                                    Icon(Icons.Filled.Clear, contentDescription = "")
+                                        itemListViewModel.isFiltered.value = false}
+                                ) {
+                                    Icon(Icons.Filled.Clear, contentDescription = null)
                                 }
                             },
                             singleLine = true
                         )
                         IconButton(
                             onClick = { showCalendar.value = true }
-                        ){
+                        ) {
                             Icon(
                                 painterResource(R.drawable.baseline_calendar_month_24),
-                                contentDescription = ""
+                                contentDescription = null
                             )
                             if (showCalendar.value)
                             {
                                 Popup(
                                     alignment = Alignment.CenterStart,
-                                    onDismissRequest = { showCalendar.value = false})
-                                {
+                                    onDismissRequest = { showCalendar.value = false }
+                                ) {
                                     Column(
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .background(color = Color.Black.copy(alpha = 0.7f)),
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         verticalArrangement = Arrangement.Center
-                                    ){
+                                    ) {
                                         CDateRangePicker(calendarState)
-                                        Row(modifier = Modifier.padding(top = 16.dp)) {
+                                        Row(modifier = Modifier.padding(top = 16.dp)
+                                        ) {
                                             Button(
-                                                onClick = { /*TODO*/ },
+                                                onClick = {
+                                                    itemListViewModel.filterList(
+                                                    queryState.value,
+                                                    calendarState.selectedStartDateMillis,
+                                                    calendarState.selectedEndDateMillis)
+                                                    itemListViewModel.isFiltered.value = true },
                                                 shape = MaterialTheme.shapes.extraSmall
                                             ) {
-                                                Text(text = "Filter")
+                                                Text(stringResource(R.string.calendar_filter_button))
                                             }
                                             Spacer(modifier = Modifier.size(16.dp))
                                             Button(
-                                                onClick = { },
+                                                onClick = { calendarState.setSelection(null, null)
+                                                          itemListViewModel.filterList(
+                                                              queryState.value,
+                                                              null,
+                                                              null)
+                                                          },
                                                 shape = MaterialTheme.shapes.extraSmall
                                             ) {
-                                                Text(text = "Clear")
+                                                Text(stringResource(R.string.calendar_clear_button))
                                             }
                                             Spacer(modifier = Modifier.size(16.dp))
                                             Button(
                                                 onClick = { showCalendar.value = false },
                                                 shape = MaterialTheme.shapes.extraSmall
                                             ) {
-                                                Text(text = "Close")
+                                                Text(stringResource(R.string.calendar_close_button))
                                             }
                                         }
                                     }
@@ -179,13 +188,14 @@ fun BarcodeApp(navController: NavHostController = rememberNavController())
                 }
                         },
             snackbarHost = { },
-            floatingActionButton = { if (currentScreen != AppScreen.AddItem)
+            floatingActionButton =
+            { if (currentScreen != AppScreen.AddItem)
                 {
                     AddFloatingActionButton{
                         addItemViewModel.resetTextFields()
                         navController.navigate(AppScreen.AddItem.name) }
                 }
-                                   },
+            },
             floatingActionButtonPosition = FabPosition.End
         ){ innerPadding ->
             NavHost(
@@ -206,21 +216,12 @@ fun BarcodeApp(navController: NavHostController = rememberNavController())
                     val viewModel = hiltViewModel<AddItemViewModel>()
                     AddItemScreen(navController, viewModel, editItemFlag = true)
                 }
-                composable(route = AppScreen.Search.name){
-                    SearchScreen()
-                }
-                composable(route = AppScreen.Browse.name){
-                }
             }
         }
     }
 }
 @Composable
 fun CDateRangePicker(state: DateRangePickerState){
-    val startDate: Long? = state.selectedStartDateMillis
-    val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd")
-    val instant = Instant.ofEpochMilli(startDate?: 0)
-    val date = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
     DateRangePicker(
         state = state,
         modifier = Modifier
@@ -228,13 +229,6 @@ fun CDateRangePicker(state: DateRangePickerState){
             .wrapContentSize()
             .clip(shape = RoundedCornerShape(16.dp))
             .background(color = MaterialTheme.colorScheme.primaryContainer),
-        title = {
-            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    modifier = Modifier,
-                    text = formatter.format(date)
-                )
-            } }
     )
 
 

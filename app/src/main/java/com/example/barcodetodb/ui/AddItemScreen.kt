@@ -29,16 +29,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.barcodetodb.R
-import dagger.hilt.android.internal.modules.ApplicationContextModule
 import kotlinx.coroutines.launch
 
 @Composable
 fun AddItemScreen(
     navController: NavController,
-    viewModel: AddItemViewModel = viewModel(),
+    viewModel: AddItemViewModel = hiltViewModel(),
     context: Context = LocalContext.current,
     editItemFlag: Boolean = false
 ){
@@ -107,7 +106,7 @@ fun AddItemScreen(
                     Icon(painterResource(R.drawable.baseline_mode_24), contentDescription = null)},
                 colors = TextFieldDefaults.colors(focusedTextColor = Color.Black),
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 keyboardActions = KeyboardActions(KeyboardActions.Default.onNext)
             )
             Spacer(modifier = Modifier.padding(4.dp))
@@ -164,7 +163,8 @@ fun AddItemScreen(
 @Preview
 @Composable
 fun AddItemScreenPreview() {
-   AddItemScreen(navController = NavController(LocalContext.current), editItemFlag = false)
+    val viewModel: AddItemViewModel = hiltViewModel()
+   AddItemScreen(navController = NavController(LocalContext.current),viewModel, editItemFlag = false)
 }
 
 

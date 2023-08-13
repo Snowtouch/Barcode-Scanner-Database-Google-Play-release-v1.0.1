@@ -41,6 +41,7 @@ class AddItemViewModel @Inject constructor(
         name: String = itemUiState.itemDetails.name,
         price: String? = itemUiState.itemDetails.price,
         quantity: String? = itemUiState.itemDetails.quantity,
+        date: String = itemUiState.itemDetails.date,
         isEdited: Boolean
     ){
         if (!isEdited) {
@@ -58,9 +59,9 @@ class AddItemViewModel @Inject constructor(
                 id = id.toInt(),
                 itemCode = code,
                 itemName = name,
-                writeDate = LocalDate.now().toString(),
+                writeDate = date,
                 itemPrice = price?.takeIf { it.isNotBlank() }?.toDouble(),
-                itemQuantity = quantity?.toInt()
+                itemQuantity = quantity?.toInt(),
 
             )
             OfflineItemsRepository.updateItem(newItem)
@@ -88,4 +89,5 @@ data class ItemDetails(
     val name: String = "",
     val price: String? = "0",
     val quantity: String? = "1",
+    val date: String = ""
 )

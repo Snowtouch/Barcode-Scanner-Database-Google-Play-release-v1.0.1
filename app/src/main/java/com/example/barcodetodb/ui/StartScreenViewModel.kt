@@ -1,5 +1,6 @@
 package com.example.barcodetodb.ui
 
+import androidx.compose.material3.DateRangePickerState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.getValue
@@ -22,5 +23,5 @@ class StartScreenViewModel: ViewModel() {
 data class StartScreenUiState(
     val currentThemeIsDark: Boolean = false,
     val expandedTopBarMenu: Boolean = false,
-    val toggleThemeButton: Boolean = false
+    val toggleThemeButton: Boolean = false,
 )

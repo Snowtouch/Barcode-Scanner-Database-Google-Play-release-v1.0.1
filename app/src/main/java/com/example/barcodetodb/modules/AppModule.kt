@@ -7,7 +7,7 @@ import com.example.barcodetodb.data.ItemDAOImpl
 import com.example.barcodetodb.data.ItemsDatabase
 import com.example.barcodetodb.data.OfflineItemsRepository
 import com.example.barcodetodb.ui.AddItemViewModel
-import com.example.barcodetodb.ui.MainScreenViewModel
+import com.example.barcodetodb.ui.ItemListViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,10 +46,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMainScreenViewModel(
+    fun provideItemListViewModel(
         OfflineItemsRepository: OfflineItemsRepository
-    ): MainScreenViewModel {
-        return MainScreenViewModel(OfflineItemsRepository)
+    ): ItemListViewModel {
+        return ItemListViewModel(OfflineItemsRepository)
     }
 
 

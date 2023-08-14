@@ -82,6 +82,7 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:2.46.1"
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
     implementation 'com.google.android.gms:play-services-code-scanner:16.1.0'
+    implementation 'com.google.code.gson:gson:2.9.0'
 }
 kapt {
     correctErrorTypes true

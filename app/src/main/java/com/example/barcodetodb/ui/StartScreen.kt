@@ -1,5 +1,6 @@
 package com.example.barcodetodb.ui
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -56,6 +58,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.barcodetodb.MainActivity
 import com.example.barcodetodb.R
 import com.example.barcodetodb.ui.theme.AppTheme
 
@@ -66,7 +69,11 @@ enum class AppScreen(@StringRes val title: Int) {
 }
 
 @Composable
-fun BarcodeApp(navController: NavHostController = rememberNavController())
+fun BarcodeApp(
+    activity: MainActivity,
+    navController: NavHostController = rememberNavController(),
+    context: Context = LocalContext.current
+    )
 {
     val startScreenViewModel: StartScreenViewModel = hiltViewModel()
     val addItemViewModel: AddItemViewModel = hiltViewModel()
@@ -83,6 +90,8 @@ fun BarcodeApp(navController: NavHostController = rememberNavController())
             topBar = {
                 BarcodeAppBar(
                     viewModel = startScreenViewModel,
+                    itemListViewModel = itemListViewModel,
+                    context = context,
                     currentScreen = currentScreen,
                     canNavigateBack = navController.previousBackStackEntry != null,
                     navigateUp = { navController.navigateUp() })
@@ -225,9 +234,6 @@ fun CDateRangePicker(state: DateRangePickerState){
             .clip(shape = RoundedCornerShape(16.dp))
             .background(color = MaterialTheme.colorScheme.primaryContainer),
     )
-
-
-
 }
 @Composable
 fun AddFloatingActionButton(buttonClicked: () -> Unit)
@@ -240,14 +246,18 @@ fun AddFloatingActionButton(buttonClicked: () -> Unit)
 @Composable
 fun BarcodeAppBar(
     viewModel: StartScreenViewModel,
+    itemListViewModel: ItemListViewModel,
+    context: Context,
     currentScreen: AppScreen,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     TopAppBar(
         title = { Text(stringResource(currentScreen.title)) },
-        colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
         modifier = modifier,
         navigationIcon = {
             if (canNavigateBack) {
@@ -262,18 +272,24 @@ fun BarcodeAppBar(
         actions = {
             IconButton(
                 onClick = { viewModel.changeDropdownMenuState() }
-            ){
+            ) {
                 Icon(imageVector = Icons.Filled.MoreVert, contentDescription = null)
             }
             DropdownMenu(
-                expanded = viewModel.uiState.expandedTopBarMenu ,
+                expanded = viewModel.uiState.expandedTopBarMenu,
                 onDismissRequest = { viewModel.changeDropdownMenuState() }
-            ){
+            ) {
                 DropdownMenuItem(
                     text = {
-                        Row(modifier = modifier, Arrangement.SpaceBetween, Alignment.CenterVertically)
-                        {
-                            Text(text = "Dark Theme", fontSize = 20.sp)
+                        Row(
+                            modifier = modifier,
+                            Arrangement.SpaceBetween,
+                            Alignment.CenterVertically
+                        ) {
+                            Text(
+                                stringResource(R.string.appbar_dropdown_menu_item_dark_theme_mode),
+                                fontSize = 20.sp
+                            )
                             Spacer(modifier = modifier.size(16.dp))
                             Switch(
                                 checked = viewModel.uiState.toggleThemeButton,
@@ -284,7 +300,15 @@ fun BarcodeAppBar(
                             )
                         }
                     },
-                    onClick = { }
+                    onClick = { viewModel.changeThemeAndSwitchButtonState(!viewModel.uiState.toggleThemeButton) }
+                )
+                DropdownMenuItem(
+                    text = { Text(text = "Save database to local memory") },
+                    onClick = { itemListViewModel.saveDatabaseToFile(context) }
+                )
+                DropdownMenuItem(
+                    text = { Text(text = "Send database by Email") },
+                    onClick = { itemListViewModel.sendDatabaseByMail(context) }
                 )
             }
         }

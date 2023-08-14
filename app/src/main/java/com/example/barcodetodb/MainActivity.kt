@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    BarcodeApp()
+                    BarcodeApp(activity = this@MainActivity)
                 }
             }
         }
@@ -45,5 +45,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun BarcodeAppPreview(){
-    BarcodeApp()
+    BarcodeApp(activity = MainActivity())
 }

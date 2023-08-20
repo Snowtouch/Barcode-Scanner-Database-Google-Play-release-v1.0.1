@@ -70,14 +70,12 @@ enum class AppScreen(@StringRes val title: Int) {
 
 @Composable
 fun BarcodeApp(
-    activity: MainActivity,
+    startScreenViewModel: StartScreenViewModel,
+    addItemViewModel: AddItemViewModel,
+    itemListViewModel: ItemListViewModel,
     navController: NavHostController = rememberNavController(),
     context: Context = LocalContext.current
-    )
-{
-    val startScreenViewModel: StartScreenViewModel = hiltViewModel()
-    val addItemViewModel: AddItemViewModel = hiltViewModel()
-    val itemListViewModel: ItemListViewModel = hiltViewModel()
+) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = AppScreen.valueOf(
         backStackEntry?.destination?.route ?: AppScreen.Main.name)
@@ -94,9 +92,10 @@ fun BarcodeApp(
                     context = context,
                     currentScreen = currentScreen,
                     canNavigateBack = navController.previousBackStackEntry != null,
-                    navigateUp = { navController.navigateUp() })
+                    navigateUp = { navController.navigateUp()})
                      },
-            bottomBar = {
+            bottomBar =
+            {
                 BottomAppBar(modifier = Modifier){
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -106,13 +105,13 @@ fun BarcodeApp(
                             value = queryState.value,
                             onValueChange = { newValue ->
                                 queryState.value = newValue
-                                if (newValue.isNotBlank())
+                                if (queryState.value.isNotBlank())
                                 {
+                                    itemListViewModel.isFiltered.value = true
                                     itemListViewModel.filterList(
                                         newValue,
                                         calendarState.selectedStartDateMillis,
                                         calendarState.selectedEndDateMillis)
-                                    itemListViewModel.isFiltered.value = true
                                 }
                                 else itemListViewModel.isFiltered.value = false
                             },
@@ -155,11 +154,11 @@ fun BarcodeApp(
                                         ) {
                                             Button(
                                                 onClick = {
+                                                    itemListViewModel.isFiltered.value = true
                                                     itemListViewModel.filterList(
                                                     queryState.value,
                                                     calendarState.selectedStartDateMillis,
-                                                    calendarState.selectedEndDateMillis)
-                                                    itemListViewModel.isFiltered.value = true },
+                                                    calendarState.selectedEndDateMillis)},
                                                 shape = MaterialTheme.shapes.extraSmall
                                             ) {
                                                 Text(stringResource(R.string.calendar_filter_button))
@@ -190,8 +189,7 @@ fun BarcodeApp(
                         }
                     }
                 }
-                        },
-            snackbarHost = { },
+            },
             floatingActionButton =
             { if (currentScreen != AppScreen.AddItem)
                 {
@@ -201,31 +199,29 @@ fun BarcodeApp(
                 }
             },
             floatingActionButtonPosition = FabPosition.End
-        ){ innerPadding ->
+        ) { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = AppScreen.Main.name,
                 modifier = Modifier.padding(innerPadding)
-            ){
+            ) {
                 composable(route = AppScreen.Main.name){
-                    val viewModel = hiltViewModel<ItemListViewModel>()
-                    val itemViewModel = hiltViewModel<AddItemViewModel>()
-                    MainScreen(navController, viewModel, itemViewModel)
+                    MainScreen(navController, itemListViewModel, addItemViewModel)
                 }
                 composable(route = AppScreen.AddItem.name){
-                    val viewModel = hiltViewModel<AddItemViewModel>()
-                    AddItemScreen(navController, viewModel)
+                    AddItemScreen(navController, addItemViewModel, itemListViewModel)
+                    addItemViewModel.editItemFlag = false
                 }
                 composable(route = AppScreen.EditItem.name){
-                    val viewModel = hiltViewModel<AddItemViewModel>()
-                    AddItemScreen(navController, viewModel, editItemFlag = true)
+                    AddItemScreen(navController, addItemViewModel, itemListViewModel)
+                    addItemViewModel.editItemFlag = true
                 }
             }
         }
     }
 }
 @Composable
-fun CDateRangePicker(state: DateRangePickerState){
+fun CDateRangePicker(state: DateRangePickerState) {
     DateRangePicker(
         state = state,
         modifier = Modifier
@@ -236,8 +232,7 @@ fun CDateRangePicker(state: DateRangePickerState){
     )
 }
 @Composable
-fun AddFloatingActionButton(buttonClicked: () -> Unit)
-{
+fun AddFloatingActionButton(buttonClicked: () -> Unit) {
     FloatingActionButton( onClick =  buttonClicked )
     {
         Icon(imageVector = Icons.Default.Add, contentDescription = "Add new item")
@@ -261,7 +256,7 @@ fun BarcodeAppBar(
         modifier = modifier,
         navigationIcon = {
             if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
+                IconButton(onClick =  navigateUp) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(id = R.string.back_button)
@@ -287,8 +282,7 @@ fun BarcodeAppBar(
                             Alignment.CenterVertically
                         ) {
                             Text(
-                                stringResource(R.string.appbar_dropdown_menu_item_dark_theme_mode),
-                                fontSize = 20.sp
+                                stringResource(R.string.appbar_dropdown_menu_item_dark_theme_mode)
                             )
                             Spacer(modifier = modifier.size(16.dp))
                             Switch(
@@ -307,9 +301,12 @@ fun BarcodeAppBar(
                     onClick = { itemListViewModel.saveDatabaseToFile(context) }
                 )
                 DropdownMenuItem(
-                    text = { Text(text = "Send database by Email") },
+                    text = { Text(text = "Send database") },
                     onClick = { itemListViewModel.sendDatabaseByMail(context) }
                 )
+                DropdownMenuItem(
+                    text = { Text(text = "Refresh") },
+                    onClick = { itemListViewModel.refreshDataFromDatabase() })
             }
         }
     )

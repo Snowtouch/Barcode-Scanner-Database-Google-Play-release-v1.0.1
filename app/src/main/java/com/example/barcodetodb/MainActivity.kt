@@ -6,12 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.barcodetodb.data.ItemDAO_Impl
 import com.example.barcodetodb.data.ItemsDatabase
+import com.example.barcodetodb.data.OfflineItemsRepository
+import com.example.barcodetodb.ui.AddItemViewModel
 import com.example.barcodetodb.ui.BarcodeApp
 import com.example.barcodetodb.ui.ItemListViewModel
+import com.example.barcodetodb.ui.StartScreenViewModel
 import com.example.barcodetodb.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -31,7 +33,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    BarcodeApp(activity = this@MainActivity)
+                    BarcodeApp(
+                        startScreenViewModel = StartScreenViewModel(),
+                        addItemViewModel = AddItemViewModel(
+                            OfflineItemsRepository(ItemDAO_Impl(itemsDatabase)), itemListViewModel
+                        ),
+                        itemListViewModel = itemListViewModel
+                    )
                 }
             }
         }
@@ -41,9 +49,4 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         itemListViewModel.refreshDataFromDatabase()
     }
-}
-@Preview
-@Composable
-fun BarcodeAppPreview(){
-    BarcodeApp(activity = MainActivity())
 }

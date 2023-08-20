@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 
 class StartScreenViewModel: ViewModel() {
 
-    var uiState by mutableStateOf(StartScreenUiState())
+    var uiState by mutableStateOf(StartScreenViewState())
 
     fun changeThemeAndSwitchButtonState(state: Boolean){
         uiState = uiState.copy(
@@ -19,7 +19,7 @@ class StartScreenViewModel: ViewModel() {
         uiState = uiState.copy(expandedTopBarMenu = !uiState.expandedTopBarMenu)
     }
 }
-data class StartScreenUiState(
+data class StartScreenViewState(
     val currentThemeIsDark: Boolean = false,
     val expandedTopBarMenu: Boolean = false,
     val toggleThemeButton: Boolean = false,

@@ -1,5 +1,6 @@
 package com.example.barcodetodb.ui
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -22,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -33,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.barcodetodb.R
@@ -41,16 +44,16 @@ import com.example.barcodetodb.data.Item
 @Composable
 fun MainScreen(
     navController: NavController,
-    viewModel: ItemListViewModel = viewModel(),
-    addItemViewModel: AddItemViewModel = viewModel()
+    viewModel: ItemListViewModel,
+    addItemViewModel: AddItemViewModel
 ){
 
-    val itemFlow = if (viewModel.isFiltered.value) {
-        viewModel.filteredItemFlow.collectAsState(initial = emptyList()).value
-    } else {
-        viewModel.rawItemFlow.collectAsState(initial = emptyList()).value
-    }
+    val itemFlow = viewModel.itemFlow.collectAsState().value
     ItemsList(viewModel, addItemViewModel, navController, itemFlow)
+    val itemListState by viewModel.itemFlow.collectAsState()
+    itemListState.forEach { item ->
+        Log.d("ItemList", "Item: ${item.itemName}")
+    }
 }
 @Composable
 fun ItemsList(
@@ -126,8 +129,10 @@ fun ItemsList(
                                         code = item.itemCode,
                                         name = item.itemName,
                                         price = item.itemPrice.toString(),
-                                        quantity = item.itemQuantity.toString()
+                                        quantity = item.itemQuantity.toString(),
+                                        date = item.writeDate
                                     ))
+                                    addItemViewModel.editItemFlag = true
                                     navController.navigate(route = AppScreen.EditItem.name)
                                 },
                                 shape = RoundedCornerShape(8.dp),

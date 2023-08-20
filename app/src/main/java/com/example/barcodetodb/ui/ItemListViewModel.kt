@@ -1,15 +1,12 @@
 package com.example.barcodetodb.ui
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.FileProvider
-import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.barcodetodb.data.Item
@@ -18,6 +15,7 @@ import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.File
 import java.time.LocalDate
@@ -30,16 +28,13 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
 ) : ViewModel() {
     //Item list raw and filtered flows
     private val _rawItemFlow = MutableStateFlow<List<Item>>(emptyList())
-    val rawItemFlow: StateFlow<List<Item>> get() = _rawItemFlow
-
     private val _filteredItemFlow = MutableStateFlow<List<Item>>(emptyList())
-    val filteredItemFlow: StateFlow<List<Item>> = _filteredItemFlow
 
     var isFiltered = mutableStateOf(false)
 
-    companion object {
-        const val REQUEST_SAVE_JSON = 123
-    }
+    val itemFlow: StateFlow<List<Item>> = if (isFiltered.value) { _filteredItemFlow }
+    else { _rawItemFlow }
+
     init {
         refreshDataFromDatabase()
     }
@@ -68,20 +63,17 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
     }
     fun deleteItem(item: Item){
         viewModelScope.launch { offlineItemsRepository.deleteItem(item) }
-
+        refreshDataFromDatabase()
     }
     fun refreshDataFromDatabase() {
         viewModelScope.launch {
-            offlineItemsRepository.getAllItemsStream().collect {
-                _rawItemFlow.value = it
-            }
+            _rawItemFlow.value = offlineItemsRepository.getAllItemsStream().first()
         }
     }
     fun saveDatabaseToFile(context: Context) {
-        val itemsDb: List<Item> = rawItemFlow.value
         val gson = Gson()
         try {
-            val json = gson.toJson(itemsDb)
+            val json = gson.toJson(_rawItemFlow.value)
             val file = createDatabaseFile(context, json)
 
             Toast.makeText(
@@ -95,7 +87,7 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
     }
 
     fun sendDatabaseByMail(context: Context) {
-        val itemsDb: List<Item> = rawItemFlow.value
+        val itemsDb: List<Item> = _rawItemFlow.value
         val gson = Gson()
         try {
             val json = gson.toJson(itemsDb)
@@ -125,7 +117,7 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
             folder.mkdirs()
         }
 
-        val fileName = "items_database ${LocalDate.now()}.json"
+        val fileName = "items_database ${LocalDate.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd"))}.json"
         val file = File(folder, fileName)
         file.writeText(json)
         return file

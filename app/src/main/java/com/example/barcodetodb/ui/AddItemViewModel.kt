@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import com.example.barcodetodb.data.Item
 import com.example.barcodetodb.data.OfflineItemsRepository
@@ -11,13 +12,16 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
+import androidx.compose.runtime.getValue
 
 @HiltViewModel
 class AddItemViewModel @Inject constructor(
-    private val offlineItemsRepository: OfflineItemsRepository
-    ) : ViewModel()
+    private val offlineItemsRepository: OfflineItemsRepository,
+    private val itemListViewModel: ItemListViewModel
+) : ViewModel()
 {
     var itemUiState by mutableStateOf(ItemUiState())
+    var editItemFlag by mutableStateOf(false)
 
     fun updateUiState(updatedItemDetails: ItemDetails){
         itemUiState = itemUiState.copy(itemDetails = updatedItemDetails)
@@ -51,6 +55,7 @@ class AddItemViewModel @Inject constructor(
                 itemQuantity = quantity?.toInt()
             )
             offlineItemsRepository.insertItem(newItem)
+            itemListViewModel.refreshDataFromDatabase()
         }
         else {
             val newItem = Item(
@@ -63,6 +68,7 @@ class AddItemViewModel @Inject constructor(
 
             )
             offlineItemsRepository.updateItem(newItem)
+            itemListViewModel.refreshDataFromDatabase()
         }
     }
     fun scanNewCode(context: Context){

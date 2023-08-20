@@ -41,7 +41,7 @@ object AppModule {
     fun provideAddItemViewModel(
         offlineItemsRepository: OfflineItemsRepository
     ): AddItemViewModel {
-        return AddItemViewModel(offlineItemsRepository)
+        return AddItemViewModel(offlineItemsRepository, ItemListViewModel(offlineItemsRepository))
     }
 
     @Provides

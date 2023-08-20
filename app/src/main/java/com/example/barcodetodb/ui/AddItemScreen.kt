@@ -19,6 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,16 +33,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import com.example.barcodetodb.R
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 @Composable
 fun AddItemScreen(
     navController: NavController,
-    viewModel: AddItemViewModel = hiltViewModel(),
-    itemListViewModel: ItemListViewModel = hiltViewModel(),
+    viewModel: AddItemViewModel,
+    itemListViewModel: ItemListViewModel,
     context: Context = LocalContext.current,
-    editItemFlag: Boolean = false
 ){
     val scope = rememberCoroutineScope()
 
@@ -138,20 +142,27 @@ fun AddItemScreen(
         Button(
             onClick = {
                 scope.launch {
-                    if (editItemFlag) {
+                    if (viewModel.editItemFlag) {
                         viewModel.saveOrEditItem(isEdited = true)
-                        viewModel.resetTextFields()
-                        itemListViewModel.isFiltered.value = false
-
-                    }
-                    else {
+                    } else {
                         viewModel.saveOrEditItem(isEdited = false)
-                        viewModel.resetTextFields()
-                        itemListViewModel.isFiltered.value = false
                     }
+
+                    viewModel.resetTextFields()
+                    itemListViewModel.isFiltered.value = false
+
+                    // Przejście do StartScreen i wyczyszczenie backstacku
+                    navController.navigate(AppScreen.Main.name) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                    }
+                    viewModel.editItemFlag = false
+                    itemListViewModel.refreshDataFromDatabase()
                 }
-                navController.popBackStack()
+
             },
+
             modifier = Modifier
                 .padding(top = 8.dp)
                 .defaultMinSize(250.dp),

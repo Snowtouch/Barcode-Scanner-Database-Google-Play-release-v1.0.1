@@ -3,6 +3,7 @@ package com.example.barcodetodb.ui
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.io.File
 import java.time.LocalDate
@@ -29,12 +31,10 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
     //Item list raw and filtered flows
     private val _rawItemFlow = MutableStateFlow<List<Item>>(emptyList())
     private val _filteredItemFlow = MutableStateFlow<List<Item>>(emptyList())
+    val itemFlow: StateFlow<List<Item>> = _rawItemFlow
+    val filteredItemFlow: StateFlow<List<Item>> = _filteredItemFlow
 
     var isFiltered = mutableStateOf(false)
-
-    val itemFlow: StateFlow<List<Item>> = if (isFiltered.value) { _filteredItemFlow }
-    else { _rawItemFlow }
-
     init {
         refreshDataFromDatabase()
     }
@@ -48,18 +48,22 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
         startDate: Long?,
         endDate: Long?
     ) {
-        val filteredItems = _rawItemFlow.value.filter { item ->
-            val queryMatches = item.itemCode.contains(query, ignoreCase = true) ||
-                    item.itemName.contains(query, ignoreCase = true)
+        val filteredItemsFlow = _rawItemFlow.map { rawItems ->
+            rawItems.filter { item ->
+                val queryMatches = item.itemCode.contains(query, ignoreCase = true) ||
+                        item.itemName.contains(query, ignoreCase = true)
 
-            val itemDate = dateToEpochMilis(item.writeDate)
+                val itemDate = dateToEpochMilis(item.writeDate)
 
-            val startDateMatches = startDate == null || (itemDate >= startDate)
-            val endDateMatches = endDate == null || (itemDate <= endDate)
+                val startDateMatches = startDate == null || (itemDate >= startDate)
+                val endDateMatches = endDate == null || (itemDate <= endDate)
 
-            queryMatches && startDateMatches && endDateMatches
+                queryMatches && startDateMatches && endDateMatches
+            }
         }
-        _filteredItemFlow.value = filteredItems
+        viewModelScope.launch {
+            _filteredItemFlow.value = filteredItemsFlow.first()
+        }
     }
     fun deleteItem(item: Item){
         viewModelScope.launch { offlineItemsRepository.deleteItem(item) }

@@ -50,15 +50,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.barcodetodb.MainActivity
 import com.example.barcodetodb.R
 import com.example.barcodetodb.ui.theme.AppTheme
 
@@ -93,7 +90,7 @@ fun BarcodeApp(
                     currentScreen = currentScreen,
                     canNavigateBack = navController.previousBackStackEntry != null,
                     navigateUp = { navController.navigateUp()})
-                     },
+            },
             bottomBar =
             {
                 BottomAppBar(modifier = Modifier){
@@ -105,26 +102,30 @@ fun BarcodeApp(
                             value = queryState.value,
                             onValueChange = { newValue ->
                                 queryState.value = newValue
-                                if (queryState.value.isNotBlank())
-                                {
+                                if (queryState.value.isNotBlank()) {
                                     itemListViewModel.isFiltered.value = true
                                     itemListViewModel.filterList(
-                                        newValue,
+                                        queryState.value,
                                         calendarState.selectedStartDateMillis,
-                                        calendarState.selectedEndDateMillis)
-                                }
-                                else itemListViewModel.isFiltered.value = false
+                                        calendarState.selectedEndDateMillis
+                                    )
+                                }else itemListViewModel.isFiltered.value = false
                             },
                             modifier = Modifier,
                             label = { Text(stringResource(R.string.search_text_field))},
                             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
-                            trailingIcon = { if (queryState.value.isNotBlank())
-                                IconButton(
-                                    onClick = {
-                                        queryState.value = ""
-                                        itemListViewModel.isFiltered.value = false}
-                                ) {
-                                    Icon(Icons.Filled.Clear, contentDescription = null)
+                            trailingIcon = {
+                                if (queryState.value.isNotBlank() || calendarState.selectedStartDateMillis != null || calendarState.selectedEndDateMillis != null) {
+                                    IconButton(
+                                        onClick = {
+                                            queryState.value = ""
+                                            calendarState.setSelection(null, null)
+                                            itemListViewModel.filterList("", null, null)
+                                            itemListViewModel.isFiltered.value = false
+                                        }
+                                    ) {
+                                        Icon(Icons.Filled.Clear, contentDescription = null)
+                                    }
                                 }
                             },
                             singleLine = true
@@ -154,23 +155,27 @@ fun BarcodeApp(
                                         ) {
                                             Button(
                                                 onClick = {
-                                                    itemListViewModel.isFiltered.value = true
                                                     itemListViewModel.filterList(
-                                                    queryState.value,
-                                                    calendarState.selectedStartDateMillis,
-                                                    calendarState.selectedEndDateMillis)},
+                                                        queryState.value,
+                                                        calendarState.selectedStartDateMillis,
+                                                        calendarState.selectedEndDateMillis
+                                                    )
+                                                    itemListViewModel.isFiltered.value = true
+                                                },
                                                 shape = MaterialTheme.shapes.extraSmall
                                             ) {
                                                 Text(stringResource(R.string.calendar_filter_button))
                                             }
                                             Spacer(modifier = Modifier.size(16.dp))
                                             Button(
-                                                onClick = { calendarState.setSelection(null, null)
-                                                          itemListViewModel.filterList(
-                                                              queryState.value,
-                                                              null,
-                                                              null)
-                                                          },
+                                                onClick = {
+                                                    calendarState.setSelection(null, null)
+                                                    itemListViewModel.filterList(
+                                                        queryState.value,
+                                                        null,
+                                                        null
+                                                    )
+                                                },
                                                 shape = MaterialTheme.shapes.extraSmall
                                             ) {
                                                 Text(stringResource(R.string.calendar_clear_button))
@@ -192,11 +197,11 @@ fun BarcodeApp(
             },
             floatingActionButton =
             { if (currentScreen != AppScreen.AddItem)
-                {
-                    AddFloatingActionButton{
-                        addItemViewModel.resetTextFields()
-                        navController.navigate(AppScreen.AddItem.name) }
-                }
+            {
+                AddFloatingActionButton{
+                    addItemViewModel.resetTextFields()
+                    navController.navigate(AppScreen.AddItem.name) }
+            }
             },
             floatingActionButtonPosition = FabPosition.End
         ) { innerPadding ->
@@ -220,6 +225,7 @@ fun BarcodeApp(
         }
     }
 }
+
 @Composable
 fun CDateRangePicker(state: DateRangePickerState) {
     DateRangePicker(

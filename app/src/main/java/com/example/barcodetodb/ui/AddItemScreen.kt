@@ -149,7 +149,6 @@ fun AddItemScreen(
                     }
 
                     viewModel.resetTextFields()
-                    itemListViewModel.isFiltered.value = false
 
                     // Przejście do StartScreen i wyczyszczenie backstacku
                     navController.navigate(AppScreen.Main.name) {

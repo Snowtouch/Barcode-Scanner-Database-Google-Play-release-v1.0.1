@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.barcodetodb.R
 import com.example.barcodetodb.data.Item
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun MainScreen(
@@ -47,22 +49,24 @@ fun MainScreen(
     viewModel: ItemListViewModel,
     addItemViewModel: AddItemViewModel
 ){
-
-    val itemFlow = viewModel.itemFlow.collectAsState().value
-    ItemsList(viewModel, addItemViewModel, navController, itemFlow)
-    val itemListState by viewModel.itemFlow.collectAsState()
-    itemListState.forEach { item ->
-        Log.d("ItemList", "Item: ${item.itemName}")
+    val itemFlow: StateFlow<List<Item>> = if (viewModel.isFiltered.value) {
+        viewModel.filteredItemFlow
+    } else {
+        viewModel.itemFlow
     }
+
+    ItemsList(viewModel, addItemViewModel, navController, itemFlow)
+
 }
 @Composable
 fun ItemsList(
     itemListViewModel: ItemListViewModel,
     addItemViewModel: AddItemViewModel,
     navController: NavController,
-    itemFlow: List<Item>,
+    itemFlow: StateFlow<List<Item>>,
     modifier: Modifier = Modifier
     ){
+    val itemListState by itemFlow.collectAsState()
     var expandedItemId by rememberSaveable { mutableLongStateOf(-1L) }
 
     Column(modifier = modifier) {
@@ -82,7 +86,8 @@ fun ItemsList(
                 .fillMaxSize()
                 .padding(8.dp)
         ){
-            items(itemFlow) { item ->
+
+            items(itemListState) { item ->
                 Card(
                     modifier = modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.extraSmall,

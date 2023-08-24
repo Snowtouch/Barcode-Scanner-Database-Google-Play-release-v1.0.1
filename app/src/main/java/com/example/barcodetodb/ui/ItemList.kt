@@ -1,6 +1,5 @@
 package com.example.barcodetodb.ui
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -23,11 +22,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,8 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.barcodetodb.R
 import com.example.barcodetodb.data.Item
@@ -93,8 +88,7 @@ fun ItemsList(
                     shape = MaterialTheme.shapes.extraSmall,
                     elevation = CardDefaults.cardElevation(8.dp),
                     border = BorderStroke(width = Dp.Hairline, Color.Black),
-                    onClick = {
-                        expandedItemId =
+                    onClick = { expandedItemId =
                     if (expandedItemId == item.id.toLong()) -1L else item.id.toLong()
                     }
                 ){

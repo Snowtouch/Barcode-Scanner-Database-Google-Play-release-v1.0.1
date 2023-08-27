@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomAppBar
@@ -50,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -58,6 +61,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.barcodetodb.R
 import com.example.barcodetodb.ui.theme.AppTheme
+import java.text.DateFormat.getDateInstance
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 enum class AppScreen(@StringRes val title: Int) {
     Main(title = R.string.app_name),
@@ -235,6 +241,40 @@ fun CDateRangePicker(state: DateRangePickerState) {
             .wrapContentSize()
             .clip(shape = RoundedCornerShape(16.dp))
             .background(color = MaterialTheme.colorScheme.primaryContainer),
+        title = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(6.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "Select date range", fontSize = 22.sp)
+            }
+        },
+        headline = {
+            Row(modifier = Modifier.fillMaxWidth().padding(16.dp))
+            {
+                Box(Modifier.weight(1f), contentAlignment = Alignment.Center)
+                {
+                    if (state.selectedStartDateMillis != null) state.selectedStartDateMillis?.let {
+                        Text(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it))
+                    } else
+                        Text(text = "Start date")
+                }
+                Box(Modifier.weight(0.2f), contentAlignment = Alignment.Center)
+                {
+                    Text(text = "-")
+                }
+                Box(Modifier.weight(1f), contentAlignment = Alignment.Center)
+                {
+                    if (state.selectedEndDateMillis != null) state.selectedEndDateMillis?.let {
+                        Text(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it))
+                    } else
+                        Text(text = "End date")
+                }
+            }
+        }
+
     )
 }
 @Composable

@@ -38,7 +38,7 @@ fun AddItemScreen(
     viewModel: AddItemViewModel,
     itemListViewModel: ItemListViewModel,
     context: Context = LocalContext.current,
-){
+) {
     val scope = rememberCoroutineScope()
 
     Column(
@@ -136,32 +136,30 @@ fun AddItemScreen(
         Button(
             onClick = {
                 scope.launch {
-                    if (viewModel.editItemFlag) {
+                    if (viewModel.editItemFlag)
+                    {
                         viewModel.saveOrEditItem(isEdited = true)
                     } else {
                         viewModel.saveOrEditItem(isEdited = false)
                     }
-
                     viewModel.resetTextFields()
-
-                    navController.navigate(AppScreen.Main.name) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = true
-                        }
+                    navController.navigate(AppScreen.Main.name)
+                    {
+                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
                     }
                     viewModel.editItemFlag = false
                     itemListViewModel.refreshDataFromDatabase()
                 }
-
             },
-
             modifier = Modifier
                 .padding(top = 8.dp)
                 .defaultMinSize(250.dp),
             shape = shapes.medium)
         {
-            Text(stringResource(R.string.add_item_screen_save_button),
-                style = MaterialTheme.typography.bodyLarge)
+            Text(
+                stringResource(R.string.add_item_screen_save_button),
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 }

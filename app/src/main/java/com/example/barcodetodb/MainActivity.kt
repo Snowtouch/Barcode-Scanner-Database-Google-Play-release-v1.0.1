@@ -36,8 +36,7 @@ class MainActivity : ComponentActivity() {
                     BarcodeApp(
                         startScreenViewModel = StartScreenViewModel(),
                         addItemViewModel = AddItemViewModel(
-                            OfflineItemsRepository(ItemDAO_Impl(itemsDatabase)), itemListViewModel
-                        ),
+                            OfflineItemsRepository(ItemDAO_Impl(itemsDatabase)), itemListViewModel),
                         itemListViewModel = itemListViewModel
                     )
                 }

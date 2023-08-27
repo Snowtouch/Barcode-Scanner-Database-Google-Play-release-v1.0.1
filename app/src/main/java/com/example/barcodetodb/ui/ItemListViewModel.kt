@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.barcodetodb.R
 import com.example.barcodetodb.data.Item
 import com.example.barcodetodb.data.OfflineItemsRepository
 import com.google.gson.Gson
@@ -32,9 +33,11 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
     val filteredItemFlow: StateFlow<List<Item>> = _filteredItemFlow
 
     var isFiltered = mutableStateOf(false)
+
     init {
         refreshDataFromDatabase()
     }
+
     private fun dateToEpochMilis(date: String): Long {
         val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd")
         val localDate = LocalDate.parse(date, formatter)
@@ -62,7 +65,7 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
             _filteredItemFlow.value = filteredItemsFlow.first()
         }
     }
-    fun deleteItem(item: Item){
+    fun deleteItem(item: Item) {
         viewModelScope.launch { offlineItemsRepository.deleteItem(item) }
         refreshDataFromDatabase()
     }
@@ -79,14 +82,14 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
 
             Toast.makeText(
                 context,
-                "Database saved successfully to ${file.absolutePath}",
+                context.getString(R.string.database_saved_successfully_message, file.absolutePath),
                 Toast.LENGTH_LONG
             ).show()
         } catch (e: Exception) {
-            showErrorMessage(context, "Error saving database: ${e.message}")
+            showErrorMessage(context,
+                context.getString(R.string.error_saving_database_message, e.message))
         }
     }
-
     fun sendDatabaseByMail(context: Context) {
         val itemsDb: List<Item> = _rawItemFlow.value
         val gson = Gson()
@@ -99,31 +102,30 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
             val emailIntent = Intent(Intent.ACTION_SEND)
             emailIntent.type = "application/json"
             emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(""))
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Database Backup")
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "Backup of database attached.")
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT,
+                context.getString(R.string.sendin_db_message_title))
+            emailIntent.putExtra(Intent.EXTRA_TEXT,
+                context.getString(R.string.sending_db_message_text))
             emailIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
             emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-            context.startActivity(Intent.createChooser(emailIntent, "Send email"))
+            context.startActivity(Intent.createChooser(emailIntent,
+                context.getString(R.string.send_email)))
         } catch (e: Exception) {
-            showErrorMessage(context, "Error sending email: ${e.message}")
+            showErrorMessage(context, context.getString(R.string.error_sending_email, e.message))
         }
     }
-
     private fun createDatabaseFile(context: Context, json: String): File {
         val folder = context.getExternalFilesDir(null)
-            ?: throw IllegalStateException("External files directory is null")
-
+            ?: throw IllegalStateException(context.getString(R.string.external_files_directory_is_null))
         if (!folder.exists()) {
             folder.mkdirs()
         }
-
         val fileName = "items_database ${LocalDate.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd"))}.json"
         val file = File(folder, fileName)
         file.writeText(json)
         return file
     }
-
     private fun showErrorMessage(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }

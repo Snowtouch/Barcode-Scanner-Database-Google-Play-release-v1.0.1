@@ -9,13 +9,13 @@ class StartScreenViewModel: ViewModel() {
 
     var uiState by mutableStateOf(StartScreenViewState())
 
-    fun changeThemeAndSwitchButtonState(state: Boolean){
+    fun changeThemeAndSwitchButtonState(state: Boolean) {
         uiState = uiState.copy(
             currentThemeIsDark = !uiState.currentThemeIsDark,
             toggleThemeButton = state
         )
     }
-    fun changeDropdownMenuState(){
+    fun changeDropdownMenuState() {
         uiState = uiState.copy(expandedTopBarMenu = !uiState.expandedTopBarMenu)
     }
 }

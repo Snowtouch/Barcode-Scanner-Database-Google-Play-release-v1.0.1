@@ -43,15 +43,13 @@ fun MainScreen(
     navController: NavController,
     viewModel: ItemListViewModel,
     addItemViewModel: AddItemViewModel
-){
+) {
     val itemFlow: StateFlow<List<Item>> = if (viewModel.isFiltered.value) {
         viewModel.filteredItemFlow
     } else {
         viewModel.itemFlow
     }
-
     ItemsList(viewModel, addItemViewModel, navController, itemFlow)
-
 }
 @Composable
 fun ItemsList(
@@ -60,14 +58,17 @@ fun ItemsList(
     navController: NavController,
     itemFlow: StateFlow<List<Item>>,
     modifier: Modifier = Modifier
-    ){
+) {
     val itemListState by itemFlow.collectAsState()
     var expandedItemId by rememberSaveable { mutableLongStateOf(-1L) }
 
-    Column(modifier = modifier) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)) {
+    Column(modifier = modifier)
+    {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
             Text(text = "ID", modifier = modifier.weight(2f))
             Text(text = "Code", modifier = modifier.weight(10f))
             Text(text = "Name", modifier = modifier.weight(9f))
@@ -80,8 +81,7 @@ fun ItemsList(
             modifier = modifier
                 .fillMaxSize()
                 .padding(8.dp)
-        ){
-
+        ) {
             items(itemListState) { item ->
                 Card(
                     modifier = modifier.fillMaxWidth(),
@@ -89,10 +89,11 @@ fun ItemsList(
                     elevation = CardDefaults.cardElevation(8.dp),
                     border = BorderStroke(width = Dp.Hairline, Color.Black),
                     onClick = { expandedItemId =
-                    if (expandedItemId == item.id.toLong()) -1L else item.id.toLong()
+                        if (expandedItemId == item.id.toLong()) -1L else item.id.toLong()
                     }
-                ){
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically)
+                    {
                         Text(
                             text = item.id.toString(),
                             modifier = modifier
@@ -118,19 +119,21 @@ fun ItemsList(
                             visible = expandedItemId == item.id.toLong(),
                             enter = fadeIn() + expandVertically(),
                             exit = fadeOut() + shrinkVertically()
-                        ){
-                        Row(modifier = modifier) {
-                            TextButton(modifier = modifier
-                                .size(width = 80.dp, height = 35.dp),
+                        ) {
+                        Row(modifier = modifier)
+                        {
+                            TextButton(
+                                modifier = modifier
+                                    .size(width = 80.dp, height = 35.dp),
                                 onClick = {
-                                    addItemViewModel.updateUiState(ItemDetails(
+                                    addItemViewModel
+                                        .updateUiState(ItemDetails(
                                         id = item.id.toString(),
                                         code = item.itemCode,
                                         name = item.itemName,
                                         price = item.itemPrice.toString(),
                                         quantity = item.itemQuantity.toString(),
-                                        date = item.writeDate
-                                    ))
+                                        date = item.writeDate))
                                     addItemViewModel.editItemFlag = true
                                     navController.navigate(route = AppScreen.EditItem.name)
                                 },
@@ -138,9 +141,10 @@ fun ItemsList(
                             ) {
                                 Text(stringResource(R.string.item_list_on_click_context_menu_edit))
                             }
-                            TextButton(modifier = modifier
-                                .padding(start = 8.dp)
-                                .size(width = 90.dp, height = 35.dp),
+                            TextButton(
+                                modifier = modifier
+                                    .padding(start = 8.dp)
+                                    .size(width = 90.dp, height = 35.dp),
                                 onClick = {
                                           itemListViewModel.deleteItem(item)
                                           },

@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomAppBar
@@ -61,7 +60,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.barcodetodb.R
 import com.example.barcodetodb.ui.theme.AppTheme
-import java.text.DateFormat.getDateInstance
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -97,8 +95,7 @@ fun BarcodeApp(
                     canNavigateBack = navController.previousBackStackEntry != null,
                     navigateUp = { navController.navigateUp()})
             },
-            bottomBar =
-            {
+            bottomBar = {
                 BottomAppBar(modifier = Modifier){
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -115,7 +112,7 @@ fun BarcodeApp(
                                         calendarState.selectedStartDateMillis,
                                         calendarState.selectedEndDateMillis
                                     )
-                                }else itemListViewModel.isFiltered.value = false
+                                } else itemListViewModel.isFiltered.value = false
                             },
                             modifier = Modifier,
                             label = { Text(stringResource(R.string.search_text_field))},
@@ -201,13 +198,11 @@ fun BarcodeApp(
                     }
                 }
             },
-            floatingActionButton =
-            { if (currentScreen != AppScreen.AddItem)
-            {
+            floatingActionButton = {
+                if (currentScreen != AppScreen.AddItem) {
                 AddFloatingActionButton{
                     addItemViewModel.resetTextFields()
-                    navController.navigate(AppScreen.AddItem.name) }
-            }
+                    navController.navigate(AppScreen.AddItem.name) } }
             },
             floatingActionButtonPosition = FabPosition.End
         ) { innerPadding ->
@@ -231,7 +226,6 @@ fun BarcodeApp(
         }
     }
 }
-
 @Composable
 fun CDateRangePicker(state: DateRangePickerState) {
     DateRangePicker(
@@ -301,8 +295,10 @@ fun BarcodeAppBar(
         ),
         modifier = modifier,
         navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(onClick =  navigateUp) {
+            if (canNavigateBack)
+            {
+                IconButton(onClick =  navigateUp)
+                {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(id = R.string.back_button)
@@ -352,7 +348,8 @@ fun BarcodeAppBar(
                 )
                 DropdownMenuItem(
                     text = { Text(text = "Refresh") },
-                    onClick = { itemListViewModel.refreshDataFromDatabase() })
+                    onClick = { itemListViewModel.refreshDataFromDatabase() }
+                )
             }
         }
     )

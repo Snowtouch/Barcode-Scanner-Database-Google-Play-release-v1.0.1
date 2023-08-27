@@ -1,6 +1,7 @@
 package com.example.barcodetodb.ui
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,15 +17,17 @@ import javax.inject.Inject
 class AddItemViewModel @Inject constructor(
     private val offlineItemsRepository: OfflineItemsRepository,
     private val itemListViewModel: ItemListViewModel
-) : ViewModel()
-{
+) : ViewModel() {
+
     var itemUiState by mutableStateOf(ItemUiState())
     var editItemFlag by mutableStateOf(false)
 
-    fun updateUiState(updatedItemDetails: ItemDetails){
+    fun updateUiState(updatedItemDetails: ItemDetails)
+    {
         itemUiState = itemUiState.copy(itemDetails = updatedItemDetails)
     }
-    fun resetTextFields(){
+    fun resetTextFields()
+    {
         val newState = ItemDetails()
         updateUiState(
             itemUiState.itemDetails.copy(
@@ -43,7 +46,7 @@ class AddItemViewModel @Inject constructor(
         quantity: String? = itemUiState.itemDetails.quantity,
         date: String = itemUiState.itemDetails.date,
         isEdited: Boolean
-    ){
+    ) {
         if (!isEdited) {
             val newItem = Item(
                 itemCode = code,
@@ -54,8 +57,7 @@ class AddItemViewModel @Inject constructor(
             )
             offlineItemsRepository.insertItem(newItem)
             itemListViewModel.refreshDataFromDatabase()
-        }
-        else {
+        } else {
             val newItem = Item(
                 id = id.toInt(),
                 itemCode = code,
@@ -63,13 +65,12 @@ class AddItemViewModel @Inject constructor(
                 writeDate = date,
                 itemPrice = price?.takeIf { it.isNotBlank() }?.toDouble(),
                 itemQuantity = quantity?.toInt(),
-
             )
             offlineItemsRepository.updateItem(newItem)
             itemListViewModel.refreshDataFromDatabase()
         }
     }
-    fun scanNewCode(context: Context){
+    fun scanNewCode(context: Context) {
         var rawValue: String?
         val scanner = GmsBarcodeScanning.getClient(context)
         scanner.startScan()
@@ -78,13 +79,13 @@ class AddItemViewModel @Inject constructor(
                 updateUiState(itemUiState.itemDetails.copy(code = rawValue.toString()))
             }
             .addOnCanceledListener {  }
-            .addOnFailureListener {  }
-
+            .addOnFailureListener { exception ->
+                Toast.makeText(context, "$exception", Toast.LENGTH_LONG).show()
+            }
     }
 }
-data class ItemUiState(
-    val itemDetails: ItemDetails = ItemDetails(),
-)
+data class ItemUiState( val itemDetails: ItemDetails = ItemDetails() )
+
 data class ItemDetails(
     val id: String = "",
     val code: String = "",

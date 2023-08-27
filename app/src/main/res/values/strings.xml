@@ -17,4 +17,11 @@
     <string name="item_list_on_click_context_menu_edit">Edit</string>
     <string name="item_list_on_click_context_menu_delete">Delete</string>
     <string name="appbar_dropdown_menu_item_dark_theme_mode">Dark theme mode</string>
+    <string name="external_files_directory_is_null">External files directory is null</string>
+    <string name="error_sending_email">Error sending email: %1$s</string>
+    <string name="send_email">Send email</string>
+    <string name="sending_db_message_text">Backup of database attached.</string>
+    <string name="sendin_db_message_title">Database Backup</string>
+    <string name="error_saving_database_message">Error saving database: %1$s</string>
+    <string name="database_saved_successfully_message">Database saved successfully to %1$s</string>
 </resources>

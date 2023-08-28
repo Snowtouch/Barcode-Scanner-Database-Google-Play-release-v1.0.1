@@ -2,6 +2,7 @@ package com.example.barcodetodb.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.FileProvider
@@ -12,12 +13,16 @@ import com.example.barcodetodb.data.Item
 import com.example.barcodetodb.data.OfflineItemsRepository
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -69,6 +74,31 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
         viewModelScope.launch { offlineItemsRepository.deleteItem(item) }
         refreshDataFromDatabase()
     }
+    suspend fun importDatabaseFromFileUri(context: Context, fileUri: Uri) {
+        try {
+            val inputStream = context.contentResolver.openInputStream(fileUri)
+            val reader = BufferedReader(InputStreamReader(inputStream))
+            val json = reader.readText()
+
+            withContext(Dispatchers.IO) {
+                reader.close()
+            }
+            val items: List<Item> = Gson().fromJson(json, Array<Item>::class.java).toList()
+
+            // Zapisz zaimportowane elementy do repozytorium
+
+            withContext(Dispatchers.IO) {
+                offlineItemsRepository.deleteAllItems()
+                for (item in items) offlineItemsRepository.insertItem(item)
+            }
+            // Odśwież dane w widoku modelu
+            refreshDataFromDatabase()
+            } catch (e: Exception) {
+                showErrorMessage(context, e.message.toString())
+            }
+
+    }
+
     fun refreshDataFromDatabase() {
         viewModelScope.launch {
             _rawItemFlow.value = offlineItemsRepository.getAllItemsStream().first()

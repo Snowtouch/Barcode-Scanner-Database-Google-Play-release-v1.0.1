@@ -31,6 +31,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -69,7 +72,7 @@ fun ItemsList(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            Text(text = "ID", modifier = modifier.weight(2f))
+            Text(text = "ID", modifier = modifier.weight(2f), fontWeight = FontWeight.Bold)
             Text(text = "Code", modifier = modifier.weight(10f))
             Text(text = "Name", modifier = modifier.weight(9f))
             Text(text = "Price", modifier = modifier.weight(4f))
@@ -96,6 +99,7 @@ fun ItemsList(
                     {
                         Text(
                             text = item.id.toString(),
+                            fontWeight = FontWeight.Bold,
                             modifier = modifier
                                 .padding(start = 2.dp)
                                 .weight(2f))

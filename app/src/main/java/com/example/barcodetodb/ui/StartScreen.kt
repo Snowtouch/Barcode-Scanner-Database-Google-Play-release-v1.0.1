@@ -1,6 +1,9 @@
 package com.example.barcodetodb.ui
 
 import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,17 +35,22 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +61,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -60,6 +69,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.barcodetodb.R
 import com.example.barcodetodb.ui.theme.AppTheme
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -83,6 +93,7 @@ fun BarcodeApp(
     val queryState = rememberSaveable { mutableStateOf("") }
     val showCalendar = rememberSaveable { mutableStateOf(false) }
     val calendarState = rememberDateRangePickerState(initialDisplayMode = DisplayMode.Picker)
+
 
     AppTheme(useDarkTheme = startScreenViewModel.uiState.currentThemeIsDark){
         Scaffold(
@@ -246,7 +257,9 @@ fun CDateRangePicker(state: DateRangePickerState) {
             }
         },
         headline = {
-            Row(modifier = Modifier.fillMaxWidth().padding(16.dp))
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp))
             {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center)
                 {
@@ -288,6 +301,7 @@ fun BarcodeAppBar(
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isFilePickerVisible by remember { mutableStateOf(false) }
     TopAppBar(
         title = { Text(stringResource(currentScreen.title)) },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -347,9 +361,54 @@ fun BarcodeAppBar(
                     onClick = { itemListViewModel.sendDatabaseByMail(context) }
                 )
                 DropdownMenuItem(
-                    text = { Text(text = "Refresh") },
-                    onClick = { itemListViewModel.refreshDataFromDatabase() }
+                    text = { Text(text = "Import database") },
+                    onClick = { isFilePickerVisible = true }
                 )
+                if (isFilePickerVisible) {
+                    val selectedFileUri = rememberSaveable { mutableStateOf<Uri?>(null) }
+                    val launcher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.GetContent()){
+                            uri: Uri? ->
+                        selectedFileUri.value = uri
+                    }
+                    Popup(alignment = Alignment.Center,onDismissRequest = {isFilePickerVisible = false}) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .background(MaterialTheme.colorScheme.primaryContainer)
+                                .clip(RoundedCornerShape(4.dp)),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            TextField(
+                                enabled = false,
+                                readOnly = true,
+                                value = if (selectedFileUri.value != null) "${selectedFileUri.value}"
+                                else "",
+                                onValueChange = {},
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                label = { Text(text = "Database file path")}
+                            )
+                            Button(
+                                onClick = { launcher.launch("application/json") },
+                                shape = MaterialTheme.shapes.extraSmall
+                            ) {
+                                Text(text = "Select file")
+                            }
+                            Button(
+                                onClick = {
+                                itemListViewModel.viewModelScope.launch {
+                                    val uri = selectedFileUri.value ?: return@launch
+                                    itemListViewModel.importDatabaseFromFileUri(context, uri) } },
+                                shape = MaterialTheme.shapes.extraSmall)
+                            {
+                                Text(text = "Import")
+                            }
+                        }
+                    }
+                }
             }
         }
     )

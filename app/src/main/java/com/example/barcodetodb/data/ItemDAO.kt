@@ -22,6 +22,9 @@ interface ItemDAO {
     @Query("SELECT * from Items")
     fun getAllItems(): Flow<List<Item>>
 
+    @Query("DELETE from Items")
+    fun deleteAllItems()
+
     @Query("SELECT * from Items WHERE itemCode = :itemCode")
     fun getItemCode(itemCode: String): Flow<Item>
 

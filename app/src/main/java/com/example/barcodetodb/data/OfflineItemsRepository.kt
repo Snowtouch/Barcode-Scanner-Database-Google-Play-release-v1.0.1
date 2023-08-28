@@ -12,6 +12,8 @@ class OfflineItemsRepository @Inject constructor(private val itemDao: ItemDAO) :
 
     override fun getAllItemsStream(): Flow<List<Item>> = itemDao.getAllItems()
 
+    override fun deleteAllItems() = itemDao.deleteAllItems()
+
     override fun getItemCode(itemCode: String): Flow<Item> = itemDao.getItemCode(itemCode)
 
     override suspend fun insertItem(item: Item) = itemDao.insert(item)

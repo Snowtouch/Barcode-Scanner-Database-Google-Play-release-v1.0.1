@@ -9,6 +9,9 @@ class ItemDAOImpl @Inject constructor(private val itemsDatabase: ItemsDatabase) 
         itemsDatabase.itemDAO().insert(item)
     }
 
+    override fun deleteAllItems(){
+        itemsDatabase.itemDAO().deleteAllItems()
+    }
     override suspend fun update(item: Item) {
         itemsDatabase.itemDAO().update(item)
     }

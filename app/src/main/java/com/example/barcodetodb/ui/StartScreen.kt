@@ -2,7 +2,6 @@ package com.example.barcodetodb.ui
 
 import android.content.Context
 import android.net.Uri
-import android.widget.PopupWindow
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
@@ -38,13 +37,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDateRangePickerState
@@ -257,7 +253,7 @@ fun CDateRangePicker(state: DateRangePickerState) {
                     .padding(6.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Select date range", fontSize = 22.sp)
+                Text(text = stringResource(R.string.date_range_picker_title_text), fontSize = 22.sp)
             }
         },
         headline = {
@@ -270,7 +266,7 @@ fun CDateRangePicker(state: DateRangePickerState) {
                     if (state.selectedStartDateMillis != null) state.selectedStartDateMillis?.let {
                         Text(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it))
                     } else
-                        Text(text = "Start date")
+                        Text(text = stringResource(R.string.date_range_picker_start_date))
                 }
                 Box(Modifier.weight(0.2f), contentAlignment = Alignment.Center)
                 {
@@ -281,7 +277,7 @@ fun CDateRangePicker(state: DateRangePickerState) {
                     if (state.selectedEndDateMillis != null) state.selectedEndDateMillis?.let {
                         Text(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it))
                     } else
-                        Text(text = "End date")
+                        Text(text = stringResource(R.string.date_range_picker_end_date))
                 }
             }
         }
@@ -292,7 +288,7 @@ fun CDateRangePicker(state: DateRangePickerState) {
 fun AddFloatingActionButton(buttonClicked: () -> Unit) {
     FloatingActionButton( onClick =  buttonClicked )
     {
-        Icon(imageVector = Icons.Default.Add, contentDescription = "Add new item")
+        Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_new_item_floating_button_desc))
     }
 }
 @Composable
@@ -356,15 +352,15 @@ fun BarcodeAppBar(
                     onClick = { viewModel.changeThemeAndSwitchButtonState(!viewModel.uiState.toggleThemeButton) }
                 )
                 DropdownMenuItem(
-                    text = { Text(text = "Save database to local memory") },
+                    text = { Text(text = stringResource(R.string.dropdown_menu_save_database_to_local_memory)) },
                     onClick = { itemListViewModel.saveDatabaseToFile(context) }
                 )
                 DropdownMenuItem(
-                    text = { Text(text = "Send database") },
+                    text = { Text(text = stringResource(R.string.dropdown_menu_send_database)) },
                     onClick = { itemListViewModel.sendDatabaseByMail(context) }
                 )
                 DropdownMenuItem(
-                    text = { Text(text = "Import database") },
+                    text = { Text(text = stringResource(R.string.dropdown_menu_import_database)) },
                     onClick = { isFilePickerVisible = true }
                 )
                 if (isFilePickerVisible) {
@@ -397,7 +393,7 @@ fun BarcodeAppBar(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(16.dp),
-                                    label = { Text(text = "Database file path") }
+                                    label = { Text(text = stringResource(R.string.import_database_textfield_label)) }
                                 )
                                 Row(
                                     modifier = modifier
@@ -410,7 +406,7 @@ fun BarcodeAppBar(
                                         modifier = modifier.defaultMinSize(minWidth = 100.dp),
                                         shape = MaterialTheme.shapes.extraSmall
                                     ) {
-                                        Text(text = "Select file")
+                                        Text(text = stringResource(R.string.select_file_button))
                                     }
                                     Button(
                                         onClick = {
@@ -421,12 +417,12 @@ fun BarcodeAppBar(
                                                     uri
                                                 )
                                             }
+                                            isFilePickerVisible = false
                                         },
                                         modifier = modifier.defaultMinSize(minWidth = 100.dp),
                                         shape = MaterialTheme.shapes.extraSmall
-                                    )
-                                    {
-                                        Text(text = "Import")
+                                    ) {
+                                        Text(text = stringResource(R.string.import_button))
                                     }
                                 }
                             }

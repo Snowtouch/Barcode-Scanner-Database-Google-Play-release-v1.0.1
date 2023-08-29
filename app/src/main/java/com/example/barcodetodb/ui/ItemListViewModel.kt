@@ -85,18 +85,14 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
             }
             val items: List<Item> = Gson().fromJson(json, Array<Item>::class.java).toList()
 
-            // Zapisz zaimportowane elementy do repozytorium
-
             withContext(Dispatchers.IO) {
                 offlineItemsRepository.deleteAllItems()
                 for (item in items) offlineItemsRepository.insertItem(item)
             }
-            // Odśwież dane w widoku modelu
-            refreshDataFromDatabase()
-            } catch (e: Exception) {
-                showErrorMessage(context, e.message.toString())
-            }
 
+            refreshDataFromDatabase()
+
+        } catch (e: Exception) { showErrorMessage(context, e.message.toString()) }
     }
 
     fun refreshDataFromDatabase() {
@@ -133,7 +129,7 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
             emailIntent.type = "application/json"
             emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(""))
             emailIntent.putExtra(Intent.EXTRA_SUBJECT,
-                context.getString(R.string.sendin_db_message_title))
+                context.getString(R.string.sending_db_message_title))
             emailIntent.putExtra(Intent.EXTRA_TEXT,
                 context.getString(R.string.sending_db_message_text))
             emailIntent.putExtra(Intent.EXTRA_STREAM, fileUri)

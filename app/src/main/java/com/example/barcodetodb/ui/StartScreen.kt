@@ -2,15 +2,18 @@ package com.example.barcodetodb.ui
 
 import android.content.Context
 import android.net.Uri
+import android.widget.PopupWindow
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -55,6 +58,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -305,8 +309,7 @@ fun BarcodeAppBar(
     TopAppBar(
         title = { Text(stringResource(currentScreen.title)) },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
+            containerColor = MaterialTheme.colorScheme.primaryContainer),
         modifier = modifier,
         navigationIcon = {
             if (canNavigateBack)
@@ -371,40 +374,61 @@ fun BarcodeAppBar(
                             uri: Uri? ->
                         selectedFileUri.value = uri
                     }
-                    Popup(alignment = Alignment.Center,onDismissRequest = {isFilePickerVisible = false}) {
-                        Column(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .background(MaterialTheme.colorScheme.primaryContainer)
-                                .clip(RoundedCornerShape(4.dp)),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                    Column {
+                        Popup(
+                            alignment = Alignment.Center,
+                            onDismissRequest = { isFilePickerVisible = false }
                         ) {
-                            TextField(
-                                enabled = false,
-                                readOnly = true,
-                                value = if (selectedFileUri.value != null) "${selectedFileUri.value}"
-                                else "",
-                                onValueChange = {},
+                            Column(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                label = { Text(text = "Database file path")}
-                            )
-                            Button(
-                                onClick = { launcher.launch("application/json") },
-                                shape = MaterialTheme.shapes.extraSmall
+                                    .padding(16.dp)
+                                    .background(MaterialTheme.colorScheme.primaryContainer)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .border(1.dp, Color.Black, RectangleShape),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text(text = "Select file")
-                            }
-                            Button(
-                                onClick = {
-                                itemListViewModel.viewModelScope.launch {
-                                    val uri = selectedFileUri.value ?: return@launch
-                                    itemListViewModel.importDatabaseFromFileUri(context, uri) } },
-                                shape = MaterialTheme.shapes.extraSmall)
-                            {
-                                Text(text = "Import")
+                                TextField(
+                                    enabled = false,
+                                    readOnly = true,
+                                    value = if (selectedFileUri.value != null) "${selectedFileUri.value}"
+                                    else "",
+                                    onValueChange = {},
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    label = { Text(text = "Database file path") }
+                                )
+                                Row(
+                                    modifier = modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 8.dp),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    Button(
+                                        onClick = { launcher.launch("application/json") },
+                                        modifier = modifier.defaultMinSize(minWidth = 100.dp),
+                                        shape = MaterialTheme.shapes.extraSmall
+                                    ) {
+                                        Text(text = "Select file")
+                                    }
+                                    Button(
+                                        onClick = {
+                                            itemListViewModel.viewModelScope.launch {
+                                                val uri = selectedFileUri.value ?: return@launch
+                                                itemListViewModel.importDatabaseFromFileUri(
+                                                    context,
+                                                    uri
+                                                )
+                                            }
+                                        },
+                                        modifier = modifier.defaultMinSize(minWidth = 100.dp),
+                                        shape = MaterialTheme.shapes.extraSmall
+                                    )
+                                    {
+                                        Text(text = "Import")
+                                    }
+                                }
                             }
                         }
                     }

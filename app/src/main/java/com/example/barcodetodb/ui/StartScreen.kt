@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.DateRangePicker
@@ -302,6 +303,8 @@ fun BarcodeAppBar(
     modifier: Modifier = Modifier
 ) {
     var isFilePickerVisible by remember { mutableStateOf(false) }
+    var showConfirmationDialog by remember { mutableStateOf(false) }
+
     TopAppBar(
         title = { Text(stringResource(currentScreen.title)) },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -410,19 +413,48 @@ fun BarcodeAppBar(
                                     }
                                     Button(
                                         onClick = {
-                                            itemListViewModel.viewModelScope.launch {
-                                                val uri = selectedFileUri.value ?: return@launch
-                                                itemListViewModel.importDatabaseFromFileUri(
-                                                    context,
-                                                    uri
-                                                )
-                                            }
-                                            isFilePickerVisible = false
+                                            showConfirmationDialog = true
                                         },
                                         modifier = modifier.defaultMinSize(minWidth = 100.dp),
                                         shape = MaterialTheme.shapes.extraSmall
                                     ) {
                                         Text(text = stringResource(R.string.import_button))
+                                    }
+                                    if (showConfirmationDialog) {
+                                        AlertDialog(
+                                            onDismissRequest = { showConfirmationDialog = false },
+                                            title = { Text(stringResource(R.string.confirm_import_alert_dialog_title)) },
+                                            text = {
+                                                Text(stringResource(R.string.confirm_import_alert_dialog_text))
+                                            },
+                                            confirmButton = {
+                                                Button(
+                                                    onClick = {
+                                                        itemListViewModel.viewModelScope.launch {
+                                                            val uri = selectedFileUri.value ?: return@launch
+                                                            itemListViewModel.importDatabaseFromFileUri(context, uri)
+                                                        }
+                                                        isFilePickerVisible = false
+                                                        showConfirmationDialog = false
+                                                    },
+                                                    modifier = modifier.defaultMinSize(minWidth = 100.dp),
+                                                    shape = MaterialTheme.shapes.extraSmall
+                                                ) {
+                                                    Text(text = stringResource(R.string.import_button))
+                                                }
+                                            },
+                                            dismissButton = {
+                                                Button(
+                                                    onClick = {
+                                                        showConfirmationDialog = false
+                                                    },
+                                                    modifier = modifier.defaultMinSize(minWidth = 100.dp),
+                                                    shape = MaterialTheme.shapes.extraSmall
+                                                ) {
+                                                    Text(stringResource(R.string.cancel_button_text))
+                                                }
+                                            }
+                                        )
                                     }
                                 }
                             }

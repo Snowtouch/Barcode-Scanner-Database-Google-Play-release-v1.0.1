@@ -34,4 +34,7 @@
     <string name="date_range_picker_start_date">Start date</string>
     <string name="date_range_picker_end_date">End date</string>
     <string name="date_range_picker_title_text">Select date range</string>
+    <string name="confirm_import_alert_dialog_title">Confirm import</string>
+    <string name="confirm_import_alert_dialog_text">Current database will be lost. Do you want to continue?</string>
+    <string name="cancel_button_text">Anuluj</string>
 </resources>

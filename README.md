@@ -1,7 +1,5 @@
 # Barcode Tracking App
 
-![App Screenshot](screenshot.png)
-
 This is a barcode tracking app for Android devices. It allows users to scan barcodes, manage their item inventory, and perform various operations related to item management. 
 The app is developed using modern Android development tools and follows the principles of Clean Architecture.
 

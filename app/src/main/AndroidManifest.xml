@@ -34,7 +34,7 @@
             android:value="barcode_ui"/>
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.barcodetodb.fileprovider"
+            android:authorities="com.snowtouch.barcodetodb.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

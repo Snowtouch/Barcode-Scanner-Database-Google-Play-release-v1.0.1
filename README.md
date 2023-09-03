@@ -13,6 +13,11 @@ The app is developed using modern Android development tools and follows the prin
 
 ## Getting Started
 
+Download from Play Store:
+https://play.google.com/store/apps/details?id=com.snowtouch.barcodetodb
+
+Or
+
 To run the app locally on your machine, follow these steps:
 
 1. Clone this repository to your local machine.

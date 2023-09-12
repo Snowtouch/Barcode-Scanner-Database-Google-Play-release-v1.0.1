@@ -65,6 +65,5 @@ class AddItemViewModelTest {
         assert(resetState.itemDetails.name.isEmpty())
         assert(resetState.itemDetails.price == "0")
         assert(resetState.itemDetails.quantity == "1")
-        // You can add more assertions as needed for other fields
     }
 }

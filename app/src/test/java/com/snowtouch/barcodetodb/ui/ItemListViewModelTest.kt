@@ -93,7 +93,6 @@ class ItemListViewModelTest {
                 writeDate = "2022-01-03")  // Date out of range
         )
 
-        // Mock the behavior of offlineItemsRepository
         coEvery { offlineItemsRepository.getAllItemsStream() } coAnswers {
             flowOf(items)
         }
@@ -134,7 +133,6 @@ class ItemListViewModelTest {
             )
         )
 
-        // Mock the behavior of offlineItemsRepository to return the initial list of items
         coEvery { offlineItemsRepository.getAllItemsStream() } coAnswers {
             flowOf(items)
         }
@@ -167,7 +165,6 @@ class ItemListViewModelTest {
                 itemQuantity = 3,
                 writeDate = "2022-01-01")
         )
-        // Mock the behavior of offlineItemsRepository
         coEvery { offlineItemsRepository.getAllItemsStream() } coAnswers {
             flowOf(items)
         }

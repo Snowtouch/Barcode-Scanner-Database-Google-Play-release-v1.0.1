@@ -46,7 +46,6 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
     private fun dateToEpochMilis(date: String): Long {
         val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd")
         val localDate = LocalDate.parse(date, formatter)
-        println(localDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli())
         return localDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
     }
     fun filterList(
@@ -72,8 +71,10 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
         }
     }
     fun deleteItem(item: Item) {
-        viewModelScope.launch { offlineItemsRepository.deleteItem(item) }
-        refreshDataFromDatabase()
+        viewModelScope.launch {
+            offlineItemsRepository.deleteItem(item)
+            refreshDataFromDatabase()
+        }
     }
     suspend fun importDatabaseFromFileUri(context: Context, fileUri: Uri) {
         try {
@@ -124,7 +125,7 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
             val json = gson.toJson(itemsDb)
             val file = createDatabaseFile(context, json)
             val fileUri = FileProvider.getUriForFile(context,
-                "com.example.barcodetodb.fileprovider", file)
+                "com.snowtouch.barcodetodb.fileprovider", file)
 
             val emailIntent = Intent(Intent.ACTION_SEND)
             emailIntent.type = "application/json"

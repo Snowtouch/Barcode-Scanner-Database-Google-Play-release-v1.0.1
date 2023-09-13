@@ -1,18 +1,11 @@
-import android.content.Context
-import androidx.lifecycle.viewModelScope
-import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
-import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
-import com.snowtouch.barcodetodb.data.Item
+
 import com.snowtouch.barcodetodb.data.OfflineItemsRepository
 import com.snowtouch.barcodetodb.ui.AddItemViewModel
 import com.snowtouch.barcodetodb.ui.ItemListViewModel
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

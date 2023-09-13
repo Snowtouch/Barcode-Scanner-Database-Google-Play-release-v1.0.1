@@ -8,10 +8,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.snowtouch.barcodetodb.R
 import com.snowtouch.barcodetodb.data.Item
 import com.snowtouch.barcodetodb.data.OfflineItemsRepository
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,6 +48,7 @@ class ItemListViewModel @Inject constructor(private val offlineItemsRepository: 
         val localDate = LocalDate.parse(date, formatter)
         return localDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
     }
+
     fun filterList(
         query: String = "",
         startDate: Long?,

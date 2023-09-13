@@ -6,9 +6,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import com.snowtouch.barcodetodb.data.Item
 import com.snowtouch.barcodetodb.data.OfflineItemsRepository
-import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
@@ -25,6 +25,15 @@ class AddItemViewModel @Inject constructor(
     fun updateUiState(updatedItemDetails: ItemDetails)
     {
         itemUiState = itemUiState.copy(itemDetails = updatedItemDetails)
+    }
+    fun checkForDoubledCode(): Boolean {
+        val itemCodeToCheck = itemUiState.itemDetails.code
+
+        val hasDuplicateCode = itemListViewModel.itemFlow.value.any { item ->
+            item.itemCode == itemCodeToCheck
+        }
+
+        return hasDuplicateCode
     }
     fun resetTextFields()
     {

@@ -37,4 +37,7 @@
     <string name="confirm_import_alert_dialog_title">Confirm import</string>
     <string name="confirm_import_alert_dialog_text">Current database will be lost. Do you want to continue?</string>
     <string name="cancel_button_text">Anuluj</string>
+    <string name="delete_item_confirmation_window_title">Delete selected item?</string>
+    <string name="delete_item_confirmation_window_confirm_button">Delete</string>
+    <string name="delete_item_confirmation_window_dismiss_button">Cancel</string>
 </resources>

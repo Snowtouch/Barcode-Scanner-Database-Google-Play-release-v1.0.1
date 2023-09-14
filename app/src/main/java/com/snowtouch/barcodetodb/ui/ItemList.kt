@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -25,6 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -62,6 +65,7 @@ fun ItemsList(
 ) {
     val itemListState by itemFlow.collectAsState()
     var expandedItemId by rememberSaveable { mutableLongStateOf(-1L) }
+    var openDeleteConfirmationDialog by remember { mutableStateOf(false) }
 
     Column(modifier = modifier)
     {
@@ -147,12 +151,35 @@ fun ItemsList(
                                 modifier = modifier
                                     .padding(start = 8.dp)
                                     .size(width = 90.dp, height = 35.dp),
-                                onClick = {
-                                          itemListViewModel.deleteItem(item)
-                                          },
+                                onClick = { openDeleteConfirmationDialog = true },
                                 shape = RoundedCornerShape(8.dp)
                             ) {
                                 Text(stringResource(R.string.item_list_on_click_context_menu_delete))
+                            }
+                            if (openDeleteConfirmationDialog) {
+                                AlertDialog(
+                                    onDismissRequest = { openDeleteConfirmationDialog = false },
+                                    title = {
+                                        Text(text = stringResource(R.string.delete_item_confirmation_window_title))
+                                    },
+                                    confirmButton = {
+                                        TextButton(
+                                            onClick = {
+                                                itemListViewModel.deleteItem(item)
+                                                openDeleteConfirmationDialog = false
+                                            }
+                                        ) {
+                                            Text(stringResource(R.string.delete_item_confirmation_window_confirm_button))
+                                        }
+                                    },
+                                    dismissButton = {
+                                        TextButton(
+                                            onClick = { openDeleteConfirmationDialog = false }
+                                        ) {
+                                            Text(stringResource(R.string.delete_item_confirmation_window_dismiss_button))
+                                        }
+                                    }
+                                )
                             }
                         }
                     }

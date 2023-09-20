@@ -24,15 +24,4 @@ class ItemDAOImpl @Inject constructor(private val itemsDatabase: ItemsDatabase) 
         return itemsDatabase.itemDAO().getAllItems()
     }
 
-    override fun getItemCode(itemCode: String): Flow<Item> {
-        return itemsDatabase.itemDAO().getItemCode(itemCode)
-    }
-
-    override fun getItemsByName(itemName: String): Flow<List<Item>> {
-        return itemsDatabase.itemDAO().getItemsByName(itemName)
-    }
-
-    override fun getItemsByDate(writeDate: String): Flow<List<Item>> {
-        return itemsDatabase.itemDAO().getItemsByDate(writeDate)
-    }
 }

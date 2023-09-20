@@ -24,13 +24,4 @@ interface ItemDAO {
 
     @Query("DELETE from Items")
     fun deleteAllItems()
-
-    @Query("SELECT * from Items WHERE itemCode = :itemCode")
-    fun getItemCode(itemCode: String): Flow<Item>
-
-    @Query("SELECT * from Items WHERE itemName = :itemName")
-    fun getItemsByName(itemName: String): Flow<List<Item>>
-
-    @Query("SELECT * from Items WHERE writeDate = :writeDate")
-    fun getItemsByDate(writeDate: String): Flow<List<Item>>
 }
